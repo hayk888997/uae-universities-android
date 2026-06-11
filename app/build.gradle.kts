@@ -1,21 +1,16 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
+    id("d3vly.android.application")
+    id("d3vly.android.compose")
+    id("d3vly.android.hilt")
 }
 
 android {
     namespace = "com.d3vly.testapp"
-    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.d3vly.testapp"
-        minSdk = 24
-        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -27,19 +22,13 @@ android {
             )
         }
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    kotlinOptions {
-        jvmTarget = "11"
-    }
-    buildFeatures {
-        compose = true
-    }
 }
 
 dependencies {
+    implementation(project(":core:domain"))
+    implementation(project(":core:data"))
+    implementation(project(":feature:listing"))
+    implementation(project(":feature:details"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

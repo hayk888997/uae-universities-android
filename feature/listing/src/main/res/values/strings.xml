@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="listing_title">UAE Universities</string>
+    <string name="listing_refresh">Refresh</string>
+    <string name="listing_try_again">Try again</string>
+    <string name="listing_unknown_country">Unknown country</string>
+    <string name="listing_error_unable_load">Unable to load universities</string>
+</resources>
