@@ -1,8 +1,6 @@
 package com.d3vly.feature.details
 
-import android.app.Activity
 import android.content.ActivityNotFoundException
-import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
@@ -12,38 +10,56 @@ import android.text.Spanned
 import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.viewModels
+import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.d3vly.feature.details.databinding.ActivityDetailsBinding
+import com.d3vly.feature.details.databinding.FragmentDetailsBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class DetailsActivity : ComponentActivity() {
-    private lateinit var binding: ActivityDetailsBinding
+class DetailsFragment : Fragment() {
+    private var _binding: FragmentDetailsBinding? = null
+    private val binding: FragmentDetailsBinding
+        get() = checkNotNull(_binding)
+
     private val viewModel: DetailsViewModel by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityDetailsBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View {
+        _binding = FragmentDetailsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         binding.refreshButton.setOnClickListener {
             viewModel.onIntent(DetailsIntent.RefreshClicked)
         }
 
         observeViewModel()
-        viewModel.onIntent(DetailsIntent.Load(UniversityDetailsArgs.from(intent)))
+        viewModel.onIntent(DetailsIntent.Load(UniversityDetailsArgs.from(arguments)))
+    }
+
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
     }
 
     private fun observeViewModel() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.state.collect { state ->
                         render(state)
@@ -88,7 +104,7 @@ class DetailsActivity : ComponentActivity() {
 
                     override fun updateDrawState(ds: TextPaint) {
                         super.updateDrawState(ds)
-                        ds.color = getColor(R.color.tamm_teal)
+                        ds.color = requireContext().getColor(R.color.tamm_teal)
                     }
                 },
                 start,
@@ -107,30 +123,27 @@ class DetailsActivity : ComponentActivity() {
         try {
             startActivity(intent)
         } catch (_: ActivityNotFoundException) {
-            Toast.makeText(this, R.string.details_no_browser_found, Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), R.string.details_no_browser_found, Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun closeAndRequestRefresh() {
-        setResult(
-            Activity.RESULT_OK,
-            Intent().putExtra(EXTRA_REFRESH_REQUESTED, true),
+        parentFragmentManager.setFragmentResult(
+            REQUEST_KEY,
+            bundleOf(RESULT_REFRESH_REQUESTED to true),
         )
-        finish()
+        parentFragmentManager.popBackStack()
     }
 
     companion object {
-        private const val EXTRA_REFRESH_REQUESTED = "com.d3vly.feature.details.REFRESH_REQUESTED"
+        const val REQUEST_KEY = "com.d3vly.feature.details.REQUEST"
+        const val RESULT_REFRESH_REQUESTED = "com.d3vly.feature.details.REFRESH_REQUESTED"
+        const val TAG = "DetailsFragment"
 
-        fun createIntent(
-            context: Context,
-            args: UniversityDetailsArgs,
-        ): Intent {
-            return args.putInto(Intent(context, DetailsActivity::class.java))
-        }
-
-        fun isRefreshRequested(data: Intent?): Boolean {
-            return data?.getBooleanExtra(EXTRA_REFRESH_REQUESTED, false) == true
+        fun newInstance(args: UniversityDetailsArgs): DetailsFragment {
+            return DetailsFragment().apply {
+                arguments = args.toBundle()
+            }
         }
     }
 }

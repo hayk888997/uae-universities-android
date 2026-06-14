@@ -1,7 +1,7 @@
 package com.d3vly.feature.details
 
-import android.content.Intent
 import android.os.Build
+import android.os.Bundle
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
@@ -14,8 +14,10 @@ data class UniversityDetailsArgs(
     val webPages: List<String>,
     val domains: List<String>,
 ) : Parcelable {
-    fun putInto(intent: Intent): Intent {
-        return intent.putExtra(EXTRA_ARGS, this)
+    fun toBundle(): Bundle {
+        return Bundle().apply {
+            putParcelable(EXTRA_ARGS, this@UniversityDetailsArgs)
+        }
     }
 
     companion object {
@@ -29,16 +31,16 @@ data class UniversityDetailsArgs(
             domains = emptyList(),
         )
 
-        fun from(intent: Intent): UniversityDetailsArgs {
-            return intent.getDetailsArgs() ?: EMPTY
+        fun from(bundle: Bundle?): UniversityDetailsArgs {
+            return bundle?.getDetailsArgs() ?: EMPTY
         }
 
         @Suppress("DEPRECATION")
-        private fun Intent.getDetailsArgs(): UniversityDetailsArgs? {
+        private fun Bundle.getDetailsArgs(): UniversityDetailsArgs? {
             return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                getParcelableExtra(EXTRA_ARGS, UniversityDetailsArgs::class.java)
+                getParcelable(EXTRA_ARGS, UniversityDetailsArgs::class.java)
             } else {
-                getParcelableExtra(EXTRA_ARGS)
+                getParcelable(EXTRA_ARGS)
             }
         }
     }
