@@ -28,7 +28,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -43,7 +42,6 @@ fun ListingScreen(
     viewModel: ListingViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
-    val uriHandler = LocalUriHandler.current
 
     LaunchedEffect(Unit) {
         viewModel.onIntent(ListingIntent.Load)
@@ -67,9 +65,6 @@ fun ListingScreen(
         state = state,
         onRefresh = { viewModel.onIntent(ListingIntent.Refresh) },
         onUniversityClick = { viewModel.onIntent(ListingIntent.UniversityClicked(it)) },
-        onWebPageClick = { webPage ->
-            runCatching { uriHandler.openUri(webPage.toBrowserUrl()) }
-        },
         modifier = modifier,
     )
 }
@@ -80,7 +75,6 @@ private fun ListingContent(
     state: ListingState,
     onRefresh: () -> Unit,
     onUniversityClick: (University) -> Unit,
-    onWebPageClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -132,7 +126,6 @@ private fun ListingContent(
                         universities = state.universities,
                         isRefreshing = state.isLoading,
                         onUniversityClick = onUniversityClick,
-                        onWebPageClick = onWebPageClick,
                     )
                 }
             }
@@ -145,7 +138,6 @@ private fun UniversityList(
     universities: List<University>,
     isRefreshing: Boolean,
     onUniversityClick: (University) -> Unit,
-    onWebPageClick: (String) -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         if (isRefreshing) {
@@ -171,7 +163,6 @@ private fun UniversityList(
                 UniversityRow(
                     university = university,
                     onClick = { onUniversityClick(university) },
-                    onWebPageClick = onWebPageClick,
                 )
             }
         }
@@ -182,7 +173,6 @@ private fun UniversityList(
 private fun UniversityRow(
     university: University,
     onClick: () -> Unit,
-    onWebPageClick: (String) -> Unit,
 ) {
     val webPage = university.webPages.firstOrNull().orEmpty()
 
@@ -207,10 +197,6 @@ private fun UniversityRow(
             )
             Text(
                 text = webPage,
-                modifier = Modifier.clickable(
-                    enabled = webPage.isNotBlank(),
-                    onClick = { onWebPageClick(webPage) },
-                ),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.secondary,
             )
@@ -220,14 +206,6 @@ private fun UniversityRow(
                 color = MaterialTheme.colorScheme.secondary,
             )
         }
-    }
-}
-
-private fun String.toBrowserUrl(): String {
-    return if (startsWith("http://") || startsWith("https://")) {
-        this
-    } else {
-        "https://$this"
     }
 }
 

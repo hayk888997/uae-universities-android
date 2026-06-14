@@ -5,7 +5,6 @@
     <string name="details_state_province">State/Province: %1$s</string>
     <string name="details_state_province_not_available">N/A</string>
     <string name="details_alpha_two_code">Alpha two code: %1$s</string>
-    <string name="details_web_pages">Web pages:</string>
+    <string name="details_web_pages">Web pages:\n%1$s</string>
     <string name="details_domains">Domains:\n%1$s</string>
-    <string name="details_no_browser_found">No browser app found</string>
 </resources>

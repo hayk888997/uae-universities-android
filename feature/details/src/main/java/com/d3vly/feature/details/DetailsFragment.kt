@@ -1,20 +1,9 @@
 package com.d3vly.feature.details
 
-import android.content.ActivityNotFoundException
-import android.content.Intent
-import android.graphics.Color
-import android.net.Uri
 import android.os.Bundle
-import android.text.SpannableStringBuilder
-import android.text.Spanned
-import android.text.TextPaint
-import android.text.method.LinkMovementMethod
-import android.text.style.ClickableSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -92,45 +81,18 @@ class DetailsFragment : Fragment() {
     }
 
     private fun renderWebPages(webPages: List<String>) {
-        val text = SpannableStringBuilder(getString(R.string.details_web_pages))
-        webPages.forEach { webPage ->
-            val start = text.length + 1
-            text.append('\n').append(webPage)
-            text.setSpan(
-                object : ClickableSpan() {
-                    override fun onClick(widget: View) {
-                        openBrowser(webPage)
-                    }
-
-                    override fun updateDrawState(ds: TextPaint) {
-                        super.updateDrawState(ds)
-                        ds.color = requireContext().getColor(R.color.tamm_teal)
-                    }
-                },
-                start,
-                start + webPage.length,
-                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
-            )
-        }
-
-        binding.webPagesTextView.text = text
-        binding.webPagesTextView.movementMethod = LinkMovementMethod.getInstance()
-        binding.webPagesTextView.highlightColor = Color.TRANSPARENT
-    }
-
-    private fun openBrowser(webPage: String) {
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(webPage.toBrowserUrl()))
-        try {
-            startActivity(intent)
-        } catch (_: ActivityNotFoundException) {
-            Toast.makeText(requireContext(), R.string.details_no_browser_found, Toast.LENGTH_SHORT).show()
-        }
+        binding.webPagesTextView.text = getString(
+            R.string.details_web_pages,
+            webPages.joinToString(separator = "\n"),
+        )
     }
 
     private fun closeAndRequestRefresh() {
         parentFragmentManager.setFragmentResult(
             REQUEST_KEY,
-            bundleOf(RESULT_REFRESH_REQUESTED to true),
+            Bundle().apply {
+                putBoolean(RESULT_REFRESH_REQUESTED, true)
+            },
         )
         parentFragmentManager.popBackStack()
     }
@@ -145,13 +107,5 @@ class DetailsFragment : Fragment() {
                 arguments = args.toBundle()
             }
         }
-    }
-}
-
-private fun String.toBrowserUrl(): String {
-    return if (startsWith("http://") || startsWith("https://")) {
-        this
-    } else {
-        "https://$this"
     }
 }
