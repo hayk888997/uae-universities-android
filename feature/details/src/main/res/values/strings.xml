@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="refresh_listing">Back and refresh universities</string>
+    <string name="details_country">Country: %1$s</string>
+    <string name="details_state_province">State/Province: %1$s</string>
+    <string name="details_state_province_not_available">N/A</string>
+    <string name="details_alpha_two_code">Country code: %1$s</string>
+    <string name="details_web_pages">Web pages:\n%1$s</string>
+    <string name="details_domains">Domains:\n%1$s</string>
+    <string name="details_error_missing_university">Unable to show university details.</string>
+</resources>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="listing_title">UAE Universities</string>
+    <string name="listing_refresh">Refresh</string>
+    <string name="listing_try_again">Try again</string>
+    <string name="listing_unknown_country">Unknown country</string>
+    <string name="listing_error_unable_load">Unable to load universities</string>
+    <string name="listing_warning_cached_data">Showing saved data. Couldn\'t refresh universities.</string>
+    <string name="listing_warning_cache_write_failed">Universities refreshed, but couldn\'t update saved data.</string>
+    <string name="listing_website_unavailable">Website unavailable</string>
+    <string name="listing_empty">No universities found.</string>
+</resources>

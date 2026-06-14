@@ -1,0 +1,28 @@
+plugins {
+    id("d3vly.android.library.parcelize")
+    id("d3vly.android.hilt")
+}
+
+android {
+    namespace = "com.d3vly.feature.details"
+
+    buildFeatures {
+        viewBinding = true
+    }
+}
+
+dependencies {
+    implementation(project(":core:designsystem"))
+    implementation(project(":core:navigation"))
+
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.fragment.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.kotlinx.coroutines.android)
+
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(project(":core:testing"))
+}

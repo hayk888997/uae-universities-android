@@ -1,4 +1,6 @@
 pluginManagement {
+    includeBuild("build-logic")
+
     repositories {
         google {
             content {
@@ -21,3 +23,10 @@ dependencyResolutionManagement {
 
 rootProject.name = "D3vly TestApp"
 include(":app")
+include(":core:domain")
+include(":core:data")
+include(":core:designsystem")
+include(":core:navigation")
+include(":core:testing")
+include(":feature:listing")
+include(":feature:details")

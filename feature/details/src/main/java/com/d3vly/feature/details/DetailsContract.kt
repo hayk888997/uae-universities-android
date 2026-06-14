@@ -1,0 +1,26 @@
+package com.d3vly.feature.details
+
+import com.d3vly.feature.details.navigation.UniversityDetailsArgs
+
+sealed interface DetailsIntent {
+    data class Load(val args: UniversityDetailsArgs?) : DetailsIntent
+    data object RefreshListingClicked : DetailsIntent
+}
+
+data class DetailsState(
+    val name: String = "",
+    val country: String = "",
+    val alphaTwoCode: String = "",
+    val stateProvince: String? = null,
+    val webPages: List<String> = emptyList(),
+    val domains: List<String> = emptyList(),
+    val errorMessage: DetailsMessage? = null,
+)
+
+enum class DetailsMessage {
+    MissingUniversity,
+}
+
+sealed interface DetailsEffect {
+    data object CloseAndRequestListingRefresh : DetailsEffect
+}
