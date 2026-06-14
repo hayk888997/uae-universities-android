@@ -1,5 +1,5 @@
 plugins {
-    id("d3vly.android.library")
+    id("d3vly.android.library.parcelize")
     id("d3vly.android.compose")
     id("d3vly.android.hilt")
 }

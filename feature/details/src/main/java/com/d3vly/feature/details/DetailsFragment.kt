@@ -9,7 +9,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.d3vly.feature.details.databinding.FragmentDetailsBinding
+import com.d3vly.feature.details.navigation.UniversityDetailsArgs
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -88,24 +90,17 @@ class DetailsFragment : Fragment() {
     }
 
     private fun closeAndRequestRefresh() {
+        findNavController().popBackStack()
         parentFragmentManager.setFragmentResult(
             REQUEST_KEY,
             Bundle().apply {
                 putBoolean(RESULT_REFRESH_REQUESTED, true)
             },
         )
-        parentFragmentManager.popBackStack()
     }
 
     companion object {
         const val REQUEST_KEY = "com.d3vly.feature.details.REQUEST"
         const val RESULT_REFRESH_REQUESTED = "com.d3vly.feature.details.REFRESH_REQUESTED"
-        const val TAG = "DetailsFragment"
-
-        fun newInstance(args: UniversityDetailsArgs): DetailsFragment {
-            return DetailsFragment().apply {
-                arguments = args.toBundle()
-            }
-        }
     }
 }

@@ -3,29 +3,24 @@ package com.d3vly.testapp
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.fragment.app.FragmentActivity
+import androidx.navigation.fragment.NavHostFragment
 import com.d3vly.core.domain.model.University
 import com.d3vly.feature.details.DetailsFragment
-import com.d3vly.feature.details.UniversityDetailsArgs
+import com.d3vly.feature.details.navigation.UniversityDetailsArgs
 import com.d3vly.feature.listing.ListingFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : FragmentActivity(), ListingFragment.Listener {
+class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        setContentView(R.layout.activity_main)
+        observeListingResults()
         observeDetailsResults()
-
-        if (savedInstanceState == null) {
-            supportFragmentManager
-                .beginTransaction()
-                .setReorderingAllowed(true)
-                .replace(android.R.id.content, ListingFragment.newInstance(), ListingFragment.TAG)
-                .commit()
-        }
     }
 
-    override fun onUniversitySelected(university: University) {
+    private fun openDetails(university: University) {
         val args = UniversityDetailsArgs(
             name = university.name,
             country = university.country,
@@ -35,16 +30,22 @@ class MainActivity : FragmentActivity(), ListingFragment.Listener {
             domains = university.domains,
         )
 
-        supportFragmentManager
-            .beginTransaction()
-            .setReorderingAllowed(true)
-            .add(android.R.id.content, DetailsFragment.newInstance(args), DetailsFragment.TAG)
-            .addToBackStack(DetailsFragment.TAG)
-            .commit()
+        navHostFragment.navController.navigate(R.id.detailsFragment, args.toBundle())
+    }
+
+    private fun observeListingResults() {
+        navHostFragment.childFragmentManager.setFragmentResultListener(
+            ListingFragment.REQUEST_KEY,
+            this,
+        ) { _, bundle ->
+            ListingFragment.getSelectedUniversity(bundle)?.let { university ->
+                openDetails(university)
+            }
+        }
     }
 
     private fun observeDetailsResults() {
-        supportFragmentManager.setFragmentResultListener(
+        navHostFragment.childFragmentManager.setFragmentResultListener(
             DetailsFragment.REQUEST_KEY,
             this,
         ) { _, bundle ->
@@ -55,7 +56,10 @@ class MainActivity : FragmentActivity(), ListingFragment.Listener {
     }
 
     private fun refreshListing() {
-        val listingFragment = supportFragmentManager.findFragmentByTag(ListingFragment.TAG) as? ListingFragment
+        val listingFragment = navHostFragment.childFragmentManager.primaryNavigationFragment as? ListingFragment
         listingFragment?.refresh()
     }
+
+    private val navHostFragment: NavHostFragment
+        get() = supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
 }

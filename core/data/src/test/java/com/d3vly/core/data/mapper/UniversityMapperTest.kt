@@ -3,7 +3,6 @@ package com.d3vly.core.data.mapper
 import com.d3vly.core.data.local.UniversityEntity
 import com.d3vly.core.data.remote.UniversityDto
 import com.d3vly.core.domain.model.University
-import com.d3vly.core.domain.model.UniversitySearchTarget
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -36,8 +35,8 @@ class UniversityMapperTest {
     fun `domain maps to entity and back without losing displayed fields`() {
         val university = University(
             name = "Abu Dhabi University",
-            country = UniversitySearchTarget.COUNTRY,
-            alphaTwoCode = UniversitySearchTarget.ALPHA_TWO_CODE,
+            country = COUNTRY,
+            alphaTwoCode = ALPHA_TWO_CODE,
             stateProvince = null,
             webPages = listOf("https://www.adu.ac.ae"),
             domains = listOf("adu.ac.ae"),
@@ -54,8 +53,8 @@ class UniversityMapperTest {
         val entity = UniversityEntity(
             id = "zayed university|united arab emirates",
             name = "Zayed University",
-            country = UniversitySearchTarget.COUNTRY,
-            alphaTwoCode = UniversitySearchTarget.ALPHA_TWO_CODE,
+            country = COUNTRY,
+            alphaTwoCode = ALPHA_TWO_CODE,
             stateProvince = "Dubai",
             webPages = listOf("https://www.zu.ac.ae"),
             domains = listOf("zu.ac.ae"),
@@ -64,13 +63,18 @@ class UniversityMapperTest {
         assertEquals(
             University(
                 name = "Zayed University",
-                country = UniversitySearchTarget.COUNTRY,
-                alphaTwoCode = UniversitySearchTarget.ALPHA_TWO_CODE,
+                country = COUNTRY,
+                alphaTwoCode = ALPHA_TWO_CODE,
                 stateProvince = "Dubai",
                 webPages = listOf("https://www.zu.ac.ae"),
                 domains = listOf("zu.ac.ae"),
             ),
             entity.toDomain(),
         )
+    }
+
+    private companion object {
+        const val COUNTRY = "United Arab Emirates"
+        const val ALPHA_TWO_CODE = "AE"
     }
 }

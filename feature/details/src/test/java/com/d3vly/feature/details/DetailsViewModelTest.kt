@@ -1,6 +1,6 @@
 package com.d3vly.feature.details
 
-import com.d3vly.core.domain.model.UniversitySearchTarget
+import com.d3vly.feature.details.navigation.UniversityDetailsArgs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.take
@@ -25,8 +25,8 @@ class DetailsViewModelTest {
 
     private val args = UniversityDetailsArgs(
         name = "Abu Dhabi University",
-        country = UniversitySearchTarget.COUNTRY,
-        alphaTwoCode = UniversitySearchTarget.ALPHA_TWO_CODE,
+        country = COUNTRY,
+        alphaTwoCode = ALPHA_TWO_CODE,
         stateProvince = null,
         webPages = listOf("https://www.adu.ac.ae"),
         domains = listOf("adu.ac.ae"),
@@ -41,8 +41,8 @@ class DetailsViewModelTest {
         assertEquals(
             DetailsState(
                 name = "Abu Dhabi University",
-                country = UniversitySearchTarget.COUNTRY,
-                alphaTwoCode = UniversitySearchTarget.ALPHA_TWO_CODE,
+                country = COUNTRY,
+                alphaTwoCode = ALPHA_TWO_CODE,
                 stateProvince = null,
                 webPages = listOf("https://www.adu.ac.ae"),
                 domains = listOf("adu.ac.ae"),
@@ -79,3 +79,6 @@ class MainDispatcherRule(
         Dispatchers.resetMain()
     }
 }
+
+private const val COUNTRY = "United Arab Emirates"
+private const val ALPHA_TWO_CODE = "AE"

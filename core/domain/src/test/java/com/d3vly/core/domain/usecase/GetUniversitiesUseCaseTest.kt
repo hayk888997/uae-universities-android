@@ -1,7 +1,6 @@
 package com.d3vly.core.domain.usecase
 
 import com.d3vly.core.domain.model.University
-import com.d3vly.core.domain.model.UniversitySearchTarget
 import com.d3vly.core.domain.repository.UniversityRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -14,8 +13,8 @@ class GetUniversitiesUseCaseTest {
         val universities = listOf(
             University(
                 name = "Abu Dhabi University",
-                country = UniversitySearchTarget.COUNTRY,
-                alphaTwoCode = UniversitySearchTarget.ALPHA_TWO_CODE,
+                country = COUNTRY,
+                alphaTwoCode = ALPHA_TWO_CODE,
                 stateProvince = null,
                 webPages = listOf("https://www.adu.ac.ae"),
                 domains = listOf("adu.ac.ae"),
@@ -40,5 +39,10 @@ class GetUniversitiesUseCaseTest {
             wasCalled = true
             return result
         }
+    }
+
+    private companion object {
+        const val COUNTRY = "United Arab Emirates"
+        const val ALPHA_TWO_CODE = "AE"
     }
 }

@@ -1,4 +1,4 @@
-package com.d3vly.feature.details
+package com.d3vly.feature.details.navigation
 
 import android.os.Build
 import android.os.Bundle

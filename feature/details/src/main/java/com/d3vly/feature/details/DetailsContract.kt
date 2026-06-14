@@ -1,5 +1,7 @@
 package com.d3vly.feature.details
 
+import com.d3vly.feature.details.navigation.UniversityDetailsArgs
+
 sealed interface DetailsIntent {
     data class Load(val args: UniversityDetailsArgs) : DetailsIntent
     data object RefreshClicked : DetailsIntent

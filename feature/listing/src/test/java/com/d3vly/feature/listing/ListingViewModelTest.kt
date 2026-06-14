@@ -1,7 +1,6 @@
 package com.d3vly.feature.listing
 
 import com.d3vly.core.domain.model.University
-import com.d3vly.core.domain.model.UniversitySearchTarget
 import com.d3vly.core.domain.repository.UniversityRepository
 import com.d3vly.core.domain.usecase.GetUniversitiesUseCase
 import kotlinx.coroutines.CompletableDeferred
@@ -31,8 +30,8 @@ class ListingViewModelTest {
 
     private val university = University(
         name = "Abu Dhabi University",
-        country = UniversitySearchTarget.COUNTRY,
-        alphaTwoCode = UniversitySearchTarget.ALPHA_TWO_CODE,
+        country = COUNTRY,
+        alphaTwoCode = ALPHA_TWO_CODE,
         stateProvince = null,
         webPages = listOf("https://www.adu.ac.ae"),
         domains = listOf("adu.ac.ae"),
@@ -137,3 +136,6 @@ class MainDispatcherRule(
         Dispatchers.resetMain()
     }
 }
+
+private const val COUNTRY = "United Arab Emirates"
+private const val ALPHA_TWO_CODE = "AE"

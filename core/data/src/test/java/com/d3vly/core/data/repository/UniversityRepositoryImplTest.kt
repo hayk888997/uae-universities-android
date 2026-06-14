@@ -4,7 +4,7 @@ import com.d3vly.core.data.local.UniversityDao
 import com.d3vly.core.data.local.UniversityEntity
 import com.d3vly.core.data.remote.UniversityApi
 import com.d3vly.core.data.remote.UniversityDto
-import com.d3vly.core.domain.model.UniversitySearchTarget
+import com.d3vly.core.data.remote.UniversitySearchConfig
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertSame
@@ -14,16 +14,16 @@ import org.junit.Test
 class UniversityRepositoryImplTest {
     private val remoteA = UniversityDto(
         name = "Abu Dhabi University",
-        country = UniversitySearchTarget.COUNTRY,
-        alphaTwoCode = UniversitySearchTarget.ALPHA_TWO_CODE,
+        country = UniversitySearchConfig.COUNTRY,
+        alphaTwoCode = ALPHA_TWO_CODE,
         stateProvince = null,
         webPages = listOf("https://www.adu.ac.ae"),
         domains = listOf("adu.ac.ae"),
     )
     private val remoteB = UniversityDto(
         name = "Zayed University",
-        country = UniversitySearchTarget.COUNTRY,
-        alphaTwoCode = UniversitySearchTarget.ALPHA_TWO_CODE,
+        country = UniversitySearchConfig.COUNTRY,
+        alphaTwoCode = ALPHA_TWO_CODE,
         stateProvince = null,
         webPages = listOf("https://www.zu.ac.ae"),
         domains = listOf("zu.ac.ae"),
@@ -52,8 +52,8 @@ class UniversityRepositoryImplTest {
                 UniversityEntity(
                     id = "cached|ae",
                     name = "Cached University",
-                    country = UniversitySearchTarget.COUNTRY,
-                    alphaTwoCode = UniversitySearchTarget.ALPHA_TWO_CODE,
+                    country = UniversitySearchConfig.COUNTRY,
+                    alphaTwoCode = ALPHA_TWO_CODE,
                     stateProvince = null,
                     webPages = listOf("https://cached.example"),
                     domains = listOf("cached.example"),
@@ -90,7 +90,7 @@ class UniversityRepositoryImplTest {
 
         override suspend fun searchUniversities(country: String): List<UniversityDto> {
             callCount += 1
-            assertEquals(UniversitySearchTarget.COUNTRY, country)
+            assertEquals(UniversitySearchConfig.COUNTRY, country)
             return result.getOrThrow()
         }
     }
@@ -110,5 +110,9 @@ class UniversityRepositoryImplTest {
         override suspend fun clearUniversities() {
             cached = emptyList()
         }
+    }
+
+    private companion object {
+        const val ALPHA_TWO_CODE = "AE"
     }
 }

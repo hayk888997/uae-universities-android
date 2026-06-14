@@ -1,5 +1,6 @@
 package com.d3vly.feature.details
 
+import com.d3vly.feature.details.navigation.UniversityDetailsArgs
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
