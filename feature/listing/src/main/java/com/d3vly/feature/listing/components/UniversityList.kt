@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,6 +23,7 @@ import com.d3vly.core.domain.model.University
 internal fun UniversityList(
     universities: List<University>,
     isRefreshing: Boolean,
+    statusMessage: String?,
     onUniversityClick: (University) -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
@@ -35,8 +38,19 @@ internal fun UniversityList(
             }
         }
 
+        if (statusMessage != null) {
+            Text(
+                text = statusMessage,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+            )
+        }
+
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.weight(1f),
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
@@ -60,6 +74,7 @@ private fun UniversityListPreview() {
         UniversityList(
             universities = previewUniversities,
             isRefreshing = true,
+            statusMessage = "Showing cached data",
             onUniversityClick = {},
         )
     }

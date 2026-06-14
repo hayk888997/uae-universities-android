@@ -6,15 +6,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.d3vly.core.designsystem.theme.D3vlyTestAppTheme
 import com.d3vly.core.domain.model.University
 import com.d3vly.feature.listing.components.ListingErrorState
@@ -25,11 +25,11 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun ListingScreen(
+    viewModel: ListingViewModel,
     onUniversitySelected: (University) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: ListingViewModel = hiltViewModel(),
 ) {
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         viewModel.onIntent(ListingIntent.Load)
@@ -86,10 +86,21 @@ private fun ListingContent(
                     )
                 }
 
+                state.universities.isEmpty() -> {
+                    Text(
+                        text = stringResource(R.string.listing_empty),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.secondary,
+                        modifier = Modifier.align(Alignment.Center),
+                    )
+                }
+
                 else -> {
+                    val statusMessageRes = state.errorMessageRes ?: state.warningMessageRes
                     UniversityList(
                         universities = state.universities,
                         isRefreshing = state.isLoading,
+                        statusMessage = statusMessageRes?.let { stringResource(it) },
                         onUniversityClick = onUniversityClick,
                     )
                 }

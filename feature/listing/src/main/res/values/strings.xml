@@ -5,4 +5,6 @@
     <string name="listing_try_again">Try again</string>
     <string name="listing_unknown_country">Unknown country</string>
     <string name="listing_error_unable_load">Unable to load universities</string>
+    <string name="listing_warning_cached_data">Showing cached data. Pulling fresh data failed.</string>
+    <string name="listing_empty">No universities found.</string>
 </resources>

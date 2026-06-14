@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -68,6 +69,20 @@ class DetailsFragment : Fragment() {
     }
 
     private fun render(state: DetailsState) {
+        val hasError = state.errorMessageRes != null
+        binding.errorTextView.isVisible = hasError
+        binding.nameTextView.isVisible = !hasError
+        binding.countryTextView.isVisible = !hasError
+        binding.stateProvinceTextView.isVisible = !hasError
+        binding.alphaTwoCodeTextView.isVisible = !hasError
+        binding.webPagesTextView.isVisible = !hasError
+        binding.domainsTextView.isVisible = !hasError
+
+        if (state.errorMessageRes != null) {
+            binding.errorTextView.text = getString(state.errorMessageRes)
+            return
+        }
+
         binding.nameTextView.text = state.name
         binding.countryTextView.text = getString(R.string.details_country, state.country)
         binding.stateProvinceTextView.text = getString(

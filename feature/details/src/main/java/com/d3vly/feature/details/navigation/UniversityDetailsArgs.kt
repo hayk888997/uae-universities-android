@@ -22,17 +22,9 @@ data class UniversityDetailsArgs(
 
     companion object {
         private const val EXTRA_ARGS = "com.d3vly.feature.details.ARGS"
-        private val EMPTY = UniversityDetailsArgs(
-            name = "",
-            country = "",
-            alphaTwoCode = "",
-            stateProvince = null,
-            webPages = emptyList(),
-            domains = emptyList(),
-        )
 
-        fun from(bundle: Bundle?): UniversityDetailsArgs {
-            return bundle?.getDetailsArgs() ?: EMPTY
+        fun from(bundle: Bundle?): UniversityDetailsArgs? {
+            return bundle?.getDetailsArgs()
         }
 
         @Suppress("DEPRECATION")

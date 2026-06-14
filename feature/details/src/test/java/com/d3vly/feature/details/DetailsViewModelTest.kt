@@ -52,6 +52,15 @@ class DetailsViewModelTest {
     }
 
     @Test
+    fun `load intent exposes error when args are missing`() {
+        val viewModel = DetailsViewModel()
+
+        viewModel.onIntent(DetailsIntent.Load(null))
+
+        assertEquals(R.string.details_error_missing_university, viewModel.state.value.errorMessageRes)
+    }
+
+    @Test
     fun `refresh click emits close and refresh listing effect`() = runTest {
         val viewModel = DetailsViewModel()
         val effects = mutableListOf<DetailsEffect>()

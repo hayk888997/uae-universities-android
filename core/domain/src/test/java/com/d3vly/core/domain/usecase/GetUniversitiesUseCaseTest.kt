@@ -1,6 +1,8 @@
 package com.d3vly.core.domain.usecase
 
 import com.d3vly.core.domain.model.University
+import com.d3vly.core.domain.model.UniversityLoadResult
+import com.d3vly.core.domain.model.UniversityLoadSource
 import com.d3vly.core.domain.repository.UniversityRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -20,22 +22,26 @@ class GetUniversitiesUseCaseTest {
                 domains = listOf("adu.ac.ae"),
             ),
         )
-        val repository = FakeUniversityRepository(Result.success(universities))
+        val loadResult = UniversityLoadResult(
+            universities = universities,
+            source = UniversityLoadSource.Remote,
+        )
+        val repository = FakeUniversityRepository(Result.success(loadResult))
         val useCase = GetUniversitiesUseCase(repository)
 
         val result = useCase()
 
         assertTrue(repository.wasCalled)
-        assertEquals(universities, result.getOrThrow())
+        assertEquals(loadResult, result.getOrThrow())
     }
 
     private class FakeUniversityRepository(
-        private val result: Result<List<University>>,
+        private val result: Result<UniversityLoadResult>,
     ) : UniversityRepository {
         var wasCalled = false
             private set
 
-        override suspend fun getUniversities(): Result<List<University>> {
+        override suspend fun getUniversities(): Result<UniversityLoadResult> {
             wasCalled = true
             return result
         }

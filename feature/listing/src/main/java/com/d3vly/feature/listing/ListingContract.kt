@@ -13,6 +13,7 @@ data class ListingState(
     val isLoading: Boolean = false,
     val universities: List<University> = emptyList(),
     @StringRes val errorMessageRes: Int? = null,
+    @StringRes val warningMessageRes: Int? = null,
 )
 
 sealed interface ListingEffect {

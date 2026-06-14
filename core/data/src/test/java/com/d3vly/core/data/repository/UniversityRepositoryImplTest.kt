@@ -5,6 +5,7 @@ import com.d3vly.core.data.local.UniversityEntity
 import com.d3vly.core.data.remote.UniversityApi
 import com.d3vly.core.data.remote.UniversityDto
 import com.d3vly.core.data.remote.UniversitySearchConfig
+import com.d3vly.core.domain.model.UniversityLoadSource
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertSame
@@ -38,7 +39,8 @@ class UniversityRepositoryImplTest {
         val result = repository.getUniversities()
 
         assertTrue(result.isSuccess)
-        assertEquals(listOf("Abu Dhabi University", "Zayed University"), result.getOrThrow().map { it.name })
+        assertEquals(UniversityLoadSource.Remote, result.getOrThrow().source)
+        assertEquals(listOf("Abu Dhabi University", "Zayed University"), result.getOrThrow().universities.map { it.name })
         assertEquals(listOf("Abu Dhabi University", "Zayed University"), dao.cached.map { it.name })
         assertEquals(1, api.callCount)
     }
@@ -65,7 +67,8 @@ class UniversityRepositoryImplTest {
         val result = repository.getUniversities()
 
         assertTrue(result.isSuccess)
-        assertEquals("Cached University", result.getOrThrow().single().name)
+        assertEquals(UniversityLoadSource.Cache, result.getOrThrow().source)
+        assertEquals("Cached University", result.getOrThrow().universities.single().name)
         assertEquals(1, api.callCount)
     }
 

@@ -44,7 +44,7 @@ class UniversityMapperTest {
 
         val entity = university.toEntity()
 
-        assertEquals("abu dhabi university|united arab emirates", entity.id)
+        assertEquals("abu dhabi university|united arab emirates|https://www.adu.ac.ae|adu.ac.ae", entity.id)
         assertEquals(university, entity.toDomain())
     }
 

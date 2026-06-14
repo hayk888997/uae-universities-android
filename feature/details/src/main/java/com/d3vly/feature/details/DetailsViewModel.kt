@@ -1,8 +1,8 @@
 package com.d3vly.feature.details
 
-import com.d3vly.feature.details.navigation.UniversityDetailsArgs
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.d3vly.feature.details.navigation.UniversityDetailsArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,7 +29,14 @@ class DetailsViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    private fun showUniversity(args: UniversityDetailsArgs) {
+    private fun showUniversity(args: UniversityDetailsArgs?) {
+        if (args == null) {
+            _state.update {
+                DetailsState(errorMessageRes = R.string.details_error_missing_university)
+            }
+            return
+        }
+
         _state.update {
             DetailsState(
                 name = args.name,
@@ -38,6 +45,7 @@ class DetailsViewModel @Inject constructor() : ViewModel() {
                 stateProvince = args.stateProvince,
                 webPages = args.webPages,
                 domains = args.domains,
+                errorMessageRes = null,
             )
         }
     }

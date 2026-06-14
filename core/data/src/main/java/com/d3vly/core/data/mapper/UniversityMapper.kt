@@ -17,7 +17,8 @@ fun UniversityDto.toDomain(): University {
 
 fun University.toEntity(): UniversityEntity {
     return UniversityEntity(
-        id = "${name.lowercase()}|${country.lowercase()}",
+        id = listOf(name, country, webPages.firstOrNull().orEmpty(), domains.firstOrNull().orEmpty())
+            .joinToString(separator = "|") { it.trim().lowercase() },
         name = name,
         country = country,
         alphaTwoCode = alphaTwoCode,

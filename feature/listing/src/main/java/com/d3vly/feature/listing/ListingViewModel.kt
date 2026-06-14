@@ -3,6 +3,7 @@ package com.d3vly.feature.listing
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.d3vly.core.domain.model.University
+import com.d3vly.core.domain.model.UniversityLoadSource
 import com.d3vly.core.domain.usecase.GetUniversitiesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -25,17 +26,27 @@ class ListingViewModel @Inject constructor(
     private val _effects = MutableSharedFlow<ListingEffect>()
     val effects: SharedFlow<ListingEffect> = _effects.asSharedFlow()
 
+    private var hasRequestedInitialLoad = false
     private var pendingRefresh = false
 
     fun onIntent(intent: ListingIntent) {
         when (intent) {
-            ListingIntent.Load -> loadUniversities()
+            ListingIntent.Load -> loadUniversitiesIfNeeded()
             ListingIntent.Refresh -> refreshUniversities()
             is ListingIntent.UniversityClicked -> openDetails(intent.university)
         }
     }
 
+    private fun loadUniversitiesIfNeeded() {
+        if (hasRequestedInitialLoad) return
+
+        hasRequestedInitialLoad = true
+        loadUniversities()
+    }
+
     private fun refreshUniversities() {
+        hasRequestedInitialLoad = true
+
         if (_state.value.isLoading) {
             pendingRefresh = true
             return
@@ -48,15 +59,16 @@ class ListingViewModel @Inject constructor(
         if (_state.value.isLoading) return
 
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true, errorMessageRes = null) }
+            _state.update { it.copy(isLoading = true, errorMessageRes = null, warningMessageRes = null) }
 
             getUniversitiesUseCase()
-                .onSuccess { universities ->
+                .onSuccess { result ->
                     _state.update {
                         it.copy(
                             isLoading = false,
-                            universities = universities,
+                            universities = result.universities,
                             errorMessageRes = null,
+                            warningMessageRes = result.source.toWarningMessageRes(),
                         )
                     }
                 }
@@ -65,6 +77,7 @@ class ListingViewModel @Inject constructor(
                         it.copy(
                             isLoading = false,
                             errorMessageRes = R.string.listing_error_unable_load,
+                            warningMessageRes = null,
                         )
                     }
                 }
@@ -82,6 +95,13 @@ class ListingViewModel @Inject constructor(
     private fun openDetails(university: University) {
         viewModelScope.launch {
             _effects.emit(ListingEffect.OpenDetails(university))
+        }
+    }
+
+    private fun UniversityLoadSource.toWarningMessageRes(): Int? {
+        return when (this) {
+            UniversityLoadSource.Remote -> null
+            UniversityLoadSource.Cache -> R.string.listing_warning_cached_data
         }
     }
 }

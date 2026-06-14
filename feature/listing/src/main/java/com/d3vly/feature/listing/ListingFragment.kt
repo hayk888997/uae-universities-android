@@ -9,6 +9,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.d3vly.core.designsystem.theme.D3vlyTestAppTheme
 import com.d3vly.core.domain.model.University
 import com.d3vly.feature.listing.navigation.SelectedUniversityArgs
@@ -30,14 +31,31 @@ class ListingFragment : Fragment() {
             setContent {
                 D3vlyTestAppTheme {
                     ListingScreen(
+                        viewModel = viewModel,
                         onUniversitySelected = { university ->
                             publishUniversitySelected(university)
                         },
-                        viewModel = viewModel,
                     )
                 }
             }
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        findNavController()
+            .currentBackStackEntry
+            ?.savedStateHandle
+            ?.getLiveData<Boolean>(REFRESH_REQUESTED_KEY)
+            ?.observe(viewLifecycleOwner) { shouldRefresh ->
+                if (shouldRefresh) {
+                    findNavController().currentBackStackEntry?.savedStateHandle?.remove<Boolean>(
+                        REFRESH_REQUESTED_KEY,
+                    )
+                    refresh()
+                }
+            }
     }
 
     fun refresh() {
@@ -55,6 +73,7 @@ class ListingFragment : Fragment() {
 
     companion object {
         const val REQUEST_KEY = "com.d3vly.feature.listing.REQUEST"
+        const val REFRESH_REQUESTED_KEY = "com.d3vly.feature.listing.REFRESH_REQUESTED"
         private const val RESULT_SELECTED_UNIVERSITY_ARGS = "com.d3vly.feature.listing.SELECTED_UNIVERSITY_ARGS"
 
         fun getSelectedUniversity(bundle: Bundle): University? {

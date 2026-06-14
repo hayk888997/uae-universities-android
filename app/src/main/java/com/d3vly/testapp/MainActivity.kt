@@ -50,8 +50,9 @@ class MainActivity : FragmentActivity() {
     }
 
     private fun refreshListing() {
-        val listingFragment = navHostFragment.childFragmentManager.primaryNavigationFragment as? ListingFragment
-        listingFragment?.refresh()
+        navHostFragment.navController
+            .getBackStackEntry(R.id.listingFragment)
+            .savedStateHandle[ListingFragment.REFRESH_REQUESTED_KEY] = true
     }
 
     private val navHostFragment: NavHostFragment
