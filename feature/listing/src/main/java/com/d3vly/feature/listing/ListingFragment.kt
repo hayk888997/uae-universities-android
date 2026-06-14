@@ -5,20 +5,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.d3vly.core.designsystem.theme.D3vlyTestAppTheme
 import com.d3vly.core.domain.model.University
 import com.d3vly.feature.listing.navigation.SelectedUniversityArgs
+import com.d3vly.feature.listing.navigation.toSelectedUniversityArgs
+import com.d3vly.feature.listing.navigation.toUniversity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ListingFragment : Fragment() {
-    private var refreshSignal by mutableIntStateOf(0)
+    private val viewModel: ListingViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,10 +30,10 @@ class ListingFragment : Fragment() {
             setContent {
                 D3vlyTestAppTheme {
                     ListingScreen(
-                        refreshSignal = refreshSignal,
                         onUniversitySelected = { university ->
                             publishUniversitySelected(university)
                         },
+                        viewModel = viewModel,
                     )
                 }
             }
@@ -41,14 +41,14 @@ class ListingFragment : Fragment() {
     }
 
     fun refresh() {
-        refreshSignal += 1
+        viewModel.onIntent(ListingIntent.Refresh)
     }
 
     private fun publishUniversitySelected(university: University) {
         parentFragmentManager.setFragmentResult(
             REQUEST_KEY,
             Bundle().apply {
-                putParcelable(RESULT_SELECTED_UNIVERSITY_ARGS, SelectedUniversityArgs.from(university))
+                putParcelable(RESULT_SELECTED_UNIVERSITY_ARGS, university.toSelectedUniversityArgs())
             },
         )
     }

@@ -13,6 +13,7 @@ android {
 
 dependencies {
     implementation(project(":core:designsystem"))
+    implementation(project(":core:domain"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.fragment.ktx)
@@ -21,7 +22,6 @@ dependencies {
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.kotlinx.coroutines.android)
 
-    testImplementation(project(":core:domain"))
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
 }

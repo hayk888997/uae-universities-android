@@ -6,7 +6,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.navigation.fragment.NavHostFragment
 import com.d3vly.core.domain.model.University
 import com.d3vly.feature.details.DetailsFragment
-import com.d3vly.feature.details.navigation.UniversityDetailsArgs
+import com.d3vly.feature.details.navigation.toUniversityDetailsArgs
 import com.d3vly.feature.listing.ListingFragment
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -21,16 +21,10 @@ class MainActivity : FragmentActivity() {
     }
 
     private fun openDetails(university: University) {
-        val args = UniversityDetailsArgs(
-            name = university.name,
-            country = university.country,
-            alphaTwoCode = university.alphaTwoCode,
-            stateProvince = university.stateProvince,
-            webPages = university.webPages,
-            domains = university.domains,
+        navHostFragment.navController.navigate(
+            R.id.detailsFragment,
+            university.toUniversityDetailsArgs().toBundle(),
         )
-
-        navHostFragment.navController.navigate(R.id.detailsFragment, args.toBundle())
     }
 
     private fun observeListingResults() {
