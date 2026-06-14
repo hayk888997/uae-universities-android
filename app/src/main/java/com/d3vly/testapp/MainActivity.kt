@@ -4,10 +4,9 @@ import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.fragment.NavHostFragment
-import com.d3vly.core.domain.model.University
-import com.d3vly.feature.details.DetailsFragment
-import com.d3vly.feature.details.navigation.toUniversityDetailsArgs
-import com.d3vly.feature.listing.ListingFragment
+import com.d3vly.feature.details.navigation.DetailsNavigationContract
+import com.d3vly.feature.listing.navigation.ListingNavigationContract
+import com.d3vly.feature.listing.navigation.SelectedUniversityArgs
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -20,19 +19,19 @@ class MainActivity : FragmentActivity() {
         observeDetailsResults()
     }
 
-    private fun openDetails(university: University) {
+    private fun openDetails(university: SelectedUniversityArgs) {
         navHostFragment.navController.navigate(
             R.id.detailsFragment,
-            university.toUniversityDetailsArgs().toBundle(),
+            university.toDetailsArgs().toBundle(),
         )
     }
 
     private fun observeListingResults() {
         navHostFragment.childFragmentManager.setFragmentResultListener(
-            ListingFragment.REQUEST_KEY,
+            ListingNavigationContract.SELECTED_UNIVERSITY_REQUEST_KEY,
             this,
         ) { _, bundle ->
-            ListingFragment.getSelectedUniversity(bundle)?.let { university ->
+            ListingNavigationContract.selectedUniversityFrom(bundle)?.let { university ->
                 openDetails(university)
             }
         }
@@ -40,10 +39,10 @@ class MainActivity : FragmentActivity() {
 
     private fun observeDetailsResults() {
         navHostFragment.childFragmentManager.setFragmentResultListener(
-            DetailsFragment.REQUEST_KEY,
+            DetailsNavigationContract.REFRESH_REQUEST_KEY,
             this,
         ) { _, bundle ->
-            if (bundle.getBoolean(DetailsFragment.RESULT_REFRESH_REQUESTED)) {
+            if (DetailsNavigationContract.isRefreshRequested(bundle)) {
                 refreshListing()
             }
         }
@@ -52,7 +51,7 @@ class MainActivity : FragmentActivity() {
     private fun refreshListing() {
         navHostFragment.navController
             .getBackStackEntry(R.id.listingFragment)
-            .savedStateHandle[ListingFragment.REFRESH_REQUESTED_KEY] = true
+            .savedStateHandle[ListingNavigationContract.REFRESH_REQUESTED_KEY] = true
     }
 
     private val navHostFragment: NavHostFragment

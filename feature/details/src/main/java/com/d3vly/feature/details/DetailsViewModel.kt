@@ -32,7 +32,7 @@ class DetailsViewModel @Inject constructor() : ViewModel() {
     private fun showUniversity(args: UniversityDetailsArgs?) {
         if (args == null) {
             _state.update {
-                DetailsState(errorMessageRes = R.string.details_error_missing_university)
+                DetailsState(errorMessage = DetailsMessage.MissingUniversity)
             }
             return
         }
@@ -45,7 +45,7 @@ class DetailsViewModel @Inject constructor() : ViewModel() {
                 stateProvince = args.stateProvince,
                 webPages = args.webPages,
                 domains = args.domains,
-                errorMessageRes = null,
+                errorMessage = null,
             )
         }
     }

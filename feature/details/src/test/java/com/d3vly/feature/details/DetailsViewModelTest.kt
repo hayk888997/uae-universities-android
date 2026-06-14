@@ -57,7 +57,7 @@ class DetailsViewModelTest {
 
         viewModel.onIntent(DetailsIntent.Load(null))
 
-        assertEquals(R.string.details_error_missing_university, viewModel.state.value.errorMessageRes)
+        assertEquals(DetailsMessage.MissingUniversity, viewModel.state.value.errorMessage)
     }
 
     @Test

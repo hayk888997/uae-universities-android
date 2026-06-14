@@ -1,13 +1,14 @@
-package com.d3vly.feature.details.navigation
+package com.d3vly.testapp
 
-import com.d3vly.core.domain.model.University
+import com.d3vly.feature.details.navigation.UniversityDetailsArgs
+import com.d3vly.feature.listing.navigation.SelectedUniversityArgs
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class UniversityDetailsArgsMapperTest {
+class MainNavigationMapperTest {
     @Test
-    fun `university maps to university details args`() {
-        val university = University(
+    fun `selected university args map to details args`() {
+        val selectedArgs = SelectedUniversityArgs(
             name = "Abu Dhabi University",
             country = "United Arab Emirates",
             alphaTwoCode = "AE",
@@ -16,7 +17,7 @@ class UniversityDetailsArgsMapperTest {
             domains = listOf("adu.ac.ae"),
         )
 
-        val args = university.toUniversityDetailsArgs()
+        val detailsArgs = selectedArgs.toDetailsArgs()
 
         assertEquals(
             UniversityDetailsArgs(
@@ -27,7 +28,7 @@ class UniversityDetailsArgsMapperTest {
                 webPages = listOf("https://www.adu.ac.ae"),
                 domains = listOf("adu.ac.ae"),
             ),
-            args,
+            detailsArgs,
         )
     }
 }

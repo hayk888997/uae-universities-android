@@ -1,6 +1,5 @@
 package com.d3vly.feature.details
 
-import androidx.annotation.StringRes
 import com.d3vly.feature.details.navigation.UniversityDetailsArgs
 
 sealed interface DetailsIntent {
@@ -15,8 +14,12 @@ data class DetailsState(
     val stateProvince: String? = null,
     val webPages: List<String> = emptyList(),
     val domains: List<String> = emptyList(),
-    @StringRes val errorMessageRes: Int? = null,
+    val errorMessage: DetailsMessage? = null,
 )
+
+enum class DetailsMessage {
+    MissingUniversity,
+}
 
 sealed interface DetailsEffect {
     data object CloseAndRefreshListing : DetailsEffect

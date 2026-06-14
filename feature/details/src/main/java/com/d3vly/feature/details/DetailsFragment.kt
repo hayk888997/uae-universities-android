@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.d3vly.feature.details.databinding.FragmentDetailsBinding
+import com.d3vly.feature.details.navigation.DetailsNavigationContract
 import com.d3vly.feature.details.navigation.UniversityDetailsArgs
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -69,7 +70,7 @@ class DetailsFragment : Fragment() {
     }
 
     private fun render(state: DetailsState) {
-        val hasError = state.errorMessageRes != null
+        val hasError = state.errorMessage != null
         binding.errorTextView.isVisible = hasError
         binding.nameTextView.isVisible = !hasError
         binding.countryTextView.isVisible = !hasError
@@ -78,8 +79,8 @@ class DetailsFragment : Fragment() {
         binding.webPagesTextView.isVisible = !hasError
         binding.domainsTextView.isVisible = !hasError
 
-        if (state.errorMessageRes != null) {
-            binding.errorTextView.text = getString(state.errorMessageRes)
+        if (state.errorMessage != null) {
+            binding.errorTextView.text = getString(state.errorMessage.stringRes)
             return
         }
 
@@ -106,16 +107,13 @@ class DetailsFragment : Fragment() {
 
     private fun closeAndRequestRefresh() {
         findNavController().popBackStack()
-        parentFragmentManager.setFragmentResult(
-            REQUEST_KEY,
-            Bundle().apply {
-                putBoolean(RESULT_REFRESH_REQUESTED, true)
-            },
+        DetailsNavigationContract.publishRefreshRequested(
+            fragmentManager = parentFragmentManager,
         )
     }
-
-    companion object {
-        const val REQUEST_KEY = "com.d3vly.feature.details.REQUEST"
-        const val RESULT_REFRESH_REQUESTED = "com.d3vly.feature.details.REFRESH_REQUESTED"
-    }
 }
+
+private val DetailsMessage.stringRes: Int
+    get() = when (this) {
+        DetailsMessage.MissingUniversity -> R.string.details_error_missing_university
+    }

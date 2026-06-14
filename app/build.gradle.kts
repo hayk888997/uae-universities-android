@@ -26,7 +26,6 @@ android {
 dependencies {
     implementation(project(":core:data"))
     implementation(project(":core:designsystem"))
-    implementation(project(":core:domain"))
     implementation(project(":feature:listing"))
     implementation(project(":feature:details"))
 

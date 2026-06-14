@@ -16,17 +16,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.d3vly.core.designsystem.theme.D3vlyTestAppTheme
-import com.d3vly.core.domain.model.University
 import com.d3vly.feature.listing.components.ListingErrorState
 import com.d3vly.feature.listing.components.ListingTopAppBar
 import com.d3vly.feature.listing.components.UniversityList
 import com.d3vly.feature.listing.components.previewUniversities
+import com.d3vly.feature.listing.navigation.SelectedUniversityArgs
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun ListingScreen(
     viewModel: ListingViewModel,
-    onUniversitySelected: (University) -> Unit,
+    onUniversitySelected: (SelectedUniversityArgs) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -55,7 +55,7 @@ fun ListingScreen(
 private fun ListingContent(
     state: ListingState,
     onRefresh: () -> Unit,
-    onUniversityClick: (University) -> Unit,
+    onUniversityClick: (UniversityUiModel) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -78,9 +78,9 @@ private fun ListingContent(
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }
 
-                state.errorMessageRes != null && state.universities.isEmpty() -> {
+                state.errorMessage != null && state.universities.isEmpty() -> {
                     ListingErrorState(
-                        message = stringResource(state.errorMessageRes),
+                        message = stringResource(state.errorMessage.stringRes),
                         onRetry = onRefresh,
                         modifier = Modifier.align(Alignment.Center),
                     )
@@ -96,11 +96,11 @@ private fun ListingContent(
                 }
 
                 else -> {
-                    val statusMessageRes = state.errorMessageRes ?: state.warningMessageRes
+                    val statusMessage = state.errorMessage ?: state.warningMessage
                     UniversityList(
                         universities = state.universities,
                         isRefreshing = state.isLoading,
-                        statusMessage = statusMessageRes?.let { stringResource(it) },
+                        statusMessage = statusMessage?.let { stringResource(it.stringRes) },
                         onUniversityClick = onUniversityClick,
                     )
                 }
@@ -140,9 +140,16 @@ private fun ListingContentLoadingPreview() {
 private fun ListingContentErrorPreview() {
     D3vlyTestAppTheme {
         ListingContent(
-            state = ListingState(errorMessageRes = R.string.listing_error_unable_load),
+            state = ListingState(errorMessage = ListingMessage.UnableToLoad),
             onRefresh = {},
             onUniversityClick = {},
         )
     }
 }
+
+private val ListingMessage.stringRes: Int
+    get() = when (this) {
+        ListingMessage.UnableToLoad -> R.string.listing_error_unable_load
+        ListingMessage.ShowingCachedData -> R.string.listing_warning_cached_data
+        ListingMessage.CacheWriteFailed -> R.string.listing_warning_cache_write_failed
+    }

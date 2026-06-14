@@ -1,6 +1,5 @@
 package com.d3vly.feature.listing
 
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,10 +10,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.d3vly.core.designsystem.theme.D3vlyTestAppTheme
-import com.d3vly.core.domain.model.University
+import com.d3vly.feature.listing.navigation.ListingNavigationContract
 import com.d3vly.feature.listing.navigation.SelectedUniversityArgs
-import com.d3vly.feature.listing.navigation.toSelectedUniversityArgs
-import com.d3vly.feature.listing.navigation.toUniversity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -47,11 +44,11 @@ class ListingFragment : Fragment() {
         findNavController()
             .currentBackStackEntry
             ?.savedStateHandle
-            ?.getLiveData<Boolean>(REFRESH_REQUESTED_KEY)
+            ?.getLiveData<Boolean>(ListingNavigationContract.REFRESH_REQUESTED_KEY)
             ?.observe(viewLifecycleOwner) { shouldRefresh ->
                 if (shouldRefresh) {
                     findNavController().currentBackStackEntry?.savedStateHandle?.remove<Boolean>(
-                        REFRESH_REQUESTED_KEY,
+                        ListingNavigationContract.REFRESH_REQUESTED_KEY,
                     )
                     refresh()
                 }
@@ -62,31 +59,10 @@ class ListingFragment : Fragment() {
         viewModel.onIntent(ListingIntent.Refresh)
     }
 
-    private fun publishUniversitySelected(university: University) {
-        parentFragmentManager.setFragmentResult(
-            REQUEST_KEY,
-            Bundle().apply {
-                putParcelable(RESULT_SELECTED_UNIVERSITY_ARGS, university.toSelectedUniversityArgs())
-            },
+    private fun publishUniversitySelected(university: SelectedUniversityArgs) {
+        ListingNavigationContract.publishSelectedUniversity(
+            fragmentManager = parentFragmentManager,
+            university = university,
         )
-    }
-
-    companion object {
-        const val REQUEST_KEY = "com.d3vly.feature.listing.REQUEST"
-        const val REFRESH_REQUESTED_KEY = "com.d3vly.feature.listing.REFRESH_REQUESTED"
-        private const val RESULT_SELECTED_UNIVERSITY_ARGS = "com.d3vly.feature.listing.SELECTED_UNIVERSITY_ARGS"
-
-        fun getSelectedUniversity(bundle: Bundle): University? {
-            return bundle.getSelectedUniversityArgs()?.toUniversity()
-        }
-
-        @Suppress("DEPRECATION")
-        private fun Bundle.getSelectedUniversityArgs(): SelectedUniversityArgs? {
-            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                getParcelable(RESULT_SELECTED_UNIVERSITY_ARGS, SelectedUniversityArgs::class.java)
-            } else {
-                getParcelable(RESULT_SELECTED_UNIVERSITY_ARGS)
-            }
-        }
     }
 }

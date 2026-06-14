@@ -17,14 +17,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.d3vly.core.designsystem.theme.D3vlyTestAppTheme
-import com.d3vly.core.domain.model.University
+import com.d3vly.feature.listing.UniversityUiModel
 
 @Composable
 internal fun UniversityList(
-    universities: List<University>,
+    universities: List<UniversityUiModel>,
     isRefreshing: Boolean,
     statusMessage: String?,
-    onUniversityClick: (University) -> Unit,
+    onUniversityClick: (UniversityUiModel) -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         if (isRefreshing) {

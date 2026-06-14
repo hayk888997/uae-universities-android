@@ -48,9 +48,9 @@ class ListingViewModelTest {
         viewModel.onIntent(ListingIntent.Load)
         advanceUntilIdle()
 
-        assertEquals(listOf(university), viewModel.state.value.universities)
-        assertNull(viewModel.state.value.errorMessageRes)
-        assertNull(viewModel.state.value.warningMessageRes)
+        assertEquals(listOf(university.toUiModel()), viewModel.state.value.universities)
+        assertNull(viewModel.state.value.errorMessage)
+        assertNull(viewModel.state.value.warningMessage)
         assertTrue(!viewModel.state.value.isLoading)
     }
 
@@ -65,7 +65,7 @@ class ListingViewModelTest {
         advanceUntilIdle()
 
         assertEquals(1, repository.callCount)
-        assertEquals(listOf(university), viewModel.state.value.universities)
+        assertEquals(listOf(university.toUiModel()), viewModel.state.value.universities)
     }
 
     @Test
@@ -77,9 +77,9 @@ class ListingViewModelTest {
         viewModel.onIntent(ListingIntent.Load)
         advanceUntilIdle()
 
-        assertEquals(emptyList<University>(), viewModel.state.value.universities)
-        assertEquals(R.string.listing_error_unable_load, viewModel.state.value.errorMessageRes)
-        assertNull(viewModel.state.value.warningMessageRes)
+        assertEquals(emptyList<UniversityUiModel>(), viewModel.state.value.universities)
+        assertEquals(ListingMessage.UnableToLoad, viewModel.state.value.errorMessage)
+        assertNull(viewModel.state.value.warningMessage)
         assertTrue(!viewModel.state.value.isLoading)
     }
 
@@ -92,9 +92,9 @@ class ListingViewModelTest {
         viewModel.onIntent(ListingIntent.Load)
         advanceUntilIdle()
 
-        assertEquals(listOf(university), viewModel.state.value.universities)
-        assertNull(viewModel.state.value.errorMessageRes)
-        assertEquals(R.string.listing_warning_cached_data, viewModel.state.value.warningMessageRes)
+        assertEquals(listOf(university.toUiModel()), viewModel.state.value.universities)
+        assertNull(viewModel.state.value.errorMessage)
+        assertEquals(ListingMessage.ShowingCachedData, viewModel.state.value.warningMessage)
     }
 
     @Test
@@ -113,9 +113,9 @@ class ListingViewModelTest {
         viewModel.onIntent(ListingIntent.Load)
         advanceUntilIdle()
 
-        assertEquals(listOf(university), viewModel.state.value.universities)
-        assertNull(viewModel.state.value.errorMessageRes)
-        assertEquals(R.string.listing_warning_cache_write_failed, viewModel.state.value.warningMessageRes)
+        assertEquals(listOf(university.toUiModel()), viewModel.state.value.universities)
+        assertNull(viewModel.state.value.errorMessage)
+        assertEquals(ListingMessage.CacheWriteFailed, viewModel.state.value.warningMessage)
     }
 
     @Test
@@ -131,9 +131,9 @@ class ListingViewModelTest {
         viewModel.onIntent(ListingIntent.Refresh)
         advanceUntilIdle()
 
-        assertEquals(listOf(university), viewModel.state.value.universities)
-        assertEquals(R.string.listing_error_unable_load, viewModel.state.value.errorMessageRes)
-        assertNull(viewModel.state.value.warningMessageRes)
+        assertEquals(listOf(university.toUiModel()), viewModel.state.value.universities)
+        assertEquals(ListingMessage.UnableToLoad, viewModel.state.value.errorMessage)
+        assertNull(viewModel.state.value.warningMessage)
     }
 
     @Test
@@ -146,10 +146,10 @@ class ListingViewModelTest {
             viewModel.effects.take(1).toList(effects)
         }
 
-        viewModel.onIntent(ListingIntent.UniversityClicked(university))
+        viewModel.onIntent(ListingIntent.UniversityClicked(university.toUiModel()))
         advanceUntilIdle()
 
-        assertEquals(listOf(ListingEffect.OpenDetails(university)), effects)
+        assertEquals(listOf(ListingEffect.OpenDetails(university.toUiModel().toSelectedUniversityArgs())), effects)
         collectJob.cancel()
     }
 
@@ -172,7 +172,7 @@ class ListingViewModelTest {
         advanceUntilIdle()
 
         assertEquals(2, repository.callCount)
-        assertEquals(listOf(refreshedUniversity), viewModel.state.value.universities)
+        assertEquals(listOf(refreshedUniversity.toUiModel()), viewModel.state.value.universities)
     }
 
     private class FakeUniversityRepository(

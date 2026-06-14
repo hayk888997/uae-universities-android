@@ -2,7 +2,6 @@ package com.d3vly.feature.listing
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.d3vly.core.domain.model.University
 import com.d3vly.core.domain.model.UniversityLoadResult
 import com.d3vly.core.domain.model.UniversityLoadSource
 import com.d3vly.core.domain.usecase.GetUniversitiesUseCase
@@ -60,16 +59,16 @@ class ListingViewModel @Inject constructor(
         if (_state.value.isLoading) return
 
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true, errorMessageRes = null, warningMessageRes = null) }
+            _state.update { it.copy(isLoading = true, errorMessage = null, warningMessage = null) }
 
             getUniversitiesUseCase()
                 .onSuccess { result ->
                     _state.update {
                         it.copy(
                             isLoading = false,
-                            universities = result.universities,
-                            errorMessageRes = null,
-                            warningMessageRes = result.toWarningMessageRes(),
+                            universities = result.universities.map { university -> university.toUiModel() },
+                            errorMessage = null,
+                            warningMessage = result.toWarningMessage(),
                         )
                     }
                 }
@@ -77,8 +76,8 @@ class ListingViewModel @Inject constructor(
                     _state.update {
                         it.copy(
                             isLoading = false,
-                            errorMessageRes = R.string.listing_error_unable_load,
-                            warningMessageRes = null,
+                            errorMessage = ListingMessage.UnableToLoad,
+                            warningMessage = null,
                         )
                     }
                 }
@@ -93,18 +92,18 @@ class ListingViewModel @Inject constructor(
         }
     }
 
-    private fun openDetails(university: University) {
+    private fun openDetails(university: UniversityUiModel) {
         viewModelScope.launch {
-            _effects.emit(ListingEffect.OpenDetails(university))
+            _effects.emit(ListingEffect.OpenDetails(university.toSelectedUniversityArgs()))
         }
     }
 
-    private fun UniversityLoadResult.toWarningMessageRes(): Int? {
-        if (cacheWriteFailed) return R.string.listing_warning_cache_write_failed
+    private fun UniversityLoadResult.toWarningMessage(): ListingMessage? {
+        if (cacheWriteFailed) return ListingMessage.CacheWriteFailed
 
         return when (source) {
             UniversityLoadSource.Remote -> null
-            UniversityLoadSource.Cache -> R.string.listing_warning_cached_data
+            UniversityLoadSource.Cache -> ListingMessage.ShowingCachedData
         }
     }
 }

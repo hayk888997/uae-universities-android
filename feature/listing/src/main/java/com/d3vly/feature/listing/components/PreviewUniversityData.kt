@@ -1,8 +1,8 @@
 package com.d3vly.feature.listing.components
 
-import com.d3vly.core.domain.model.University
+import com.d3vly.feature.listing.UniversityUiModel
 
-internal val previewUniversity = University(
+internal val previewUniversity = UniversityUiModel(
     name = "Abu Dhabi University",
     country = "United Arab Emirates",
     alphaTwoCode = "AE",
