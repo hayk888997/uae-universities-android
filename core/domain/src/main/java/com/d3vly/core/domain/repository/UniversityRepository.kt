@@ -1,7 +1,7 @@
 package com.d3vly.core.domain.repository
 
-import com.d3vly.core.domain.model.UniversityLoadResult
+import com.d3vly.core.domain.model.UniversitiesResult
 
 interface UniversityRepository {
-    suspend fun getUniversities(): Result<UniversityLoadResult>
+    suspend fun getUniversities(): UniversitiesResult
 }

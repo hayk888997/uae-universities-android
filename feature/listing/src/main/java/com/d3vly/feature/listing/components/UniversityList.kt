@@ -7,12 +7,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -26,11 +28,17 @@ internal fun UniversityList(
     statusMessage: String?,
     onUniversityClick: (UniversityUiModel) -> Unit,
 ) {
-    Column(modifier = Modifier.fillMaxSize()) {
+    val contentModifier = Modifier
+        .widthIn(max = 720.dp)
+        .fillMaxWidth()
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
         if (isRefreshing) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
+                modifier = contentModifier
                     .padding(16.dp),
                 horizontalArrangement = Arrangement.Center,
             ) {
@@ -43,14 +51,13 @@ internal fun UniversityList(
                 text = statusMessage,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.secondary,
-                modifier = Modifier
-                    .fillMaxWidth()
+                modifier = contentModifier
                     .padding(horizontal = 16.dp, vertical = 8.dp),
             )
         }
 
         LazyColumn(
-            modifier = Modifier.weight(1f),
+            modifier = contentModifier.weight(1f),
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {

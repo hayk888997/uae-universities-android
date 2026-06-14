@@ -17,8 +17,7 @@ fun UniversityDto.toDomain(): University {
 
 fun University.toEntity(): UniversityEntity {
     return UniversityEntity(
-        id = listOf(name, country, webPages.firstOrNull().orEmpty(), domains.firstOrNull().orEmpty())
-            .joinToString(separator = "|") { it.trim().lowercase() },
+        id = stableCacheId(),
         name = name,
         country = country,
         alphaTwoCode = alphaTwoCode,
@@ -26,6 +25,11 @@ fun University.toEntity(): UniversityEntity {
         webPages = webPages,
         domains = domains,
     )
+}
+
+private fun University.stableCacheId(): String {
+    return listOf(name, country, webPages.firstOrNull().orEmpty(), domains.firstOrNull().orEmpty())
+        .joinToString(separator = "|") { it.trim().lowercase() }
 }
 
 fun UniversityEntity.toDomain(): University {

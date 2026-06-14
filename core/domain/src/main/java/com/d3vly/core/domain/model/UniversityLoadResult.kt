@@ -6,6 +6,11 @@ data class UniversityLoadResult(
     val cacheWriteFailed: Boolean = false,
 )
 
+sealed interface UniversitiesResult {
+    data class Success(val result: UniversityLoadResult) : UniversitiesResult
+    data class Error(val cause: Throwable) : UniversitiesResult
+}
+
 enum class UniversityLoadSource {
     Remote,
     Cache,

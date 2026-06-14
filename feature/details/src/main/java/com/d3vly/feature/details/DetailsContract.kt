@@ -4,7 +4,7 @@ import com.d3vly.feature.details.navigation.UniversityDetailsArgs
 
 sealed interface DetailsIntent {
     data class Load(val args: UniversityDetailsArgs?) : DetailsIntent
-    data object RefreshClicked : DetailsIntent
+    data object RefreshListingClicked : DetailsIntent
 }
 
 data class DetailsState(
@@ -22,5 +22,5 @@ enum class DetailsMessage {
 }
 
 sealed interface DetailsEffect {
-    data object CloseAndRefreshListing : DetailsEffect
+    data object CloseAndRequestListingRefresh : DetailsEffect
 }

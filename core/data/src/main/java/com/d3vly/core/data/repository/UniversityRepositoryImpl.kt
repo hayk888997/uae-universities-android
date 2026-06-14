@@ -7,6 +7,7 @@ import com.d3vly.core.data.remote.UniversityApi
 import com.d3vly.core.domain.model.University
 import com.d3vly.core.domain.model.UniversityLoadResult
 import com.d3vly.core.domain.model.UniversityLoadSource
+import com.d3vly.core.domain.model.UniversitiesResult
 import com.d3vly.core.domain.repository.UniversityRepository
 import kotlinx.coroutines.CancellationException
 import javax.inject.Inject
@@ -15,13 +16,13 @@ class UniversityRepositoryImpl @Inject constructor(
     private val api: UniversityApi,
     private val dao: UniversityDao,
 ) : UniversityRepository {
-    override suspend fun getUniversities(): Result<UniversityLoadResult> {
+    override suspend fun getUniversities(): UniversitiesResult {
         val remoteResult = fetchRemoteUniversities()
 
         return remoteResult.fold(
             onSuccess = { remoteUniversities ->
                 val cacheWriteFailed = dao.cacheWriteFailed(remoteUniversities)
-                Result.success(
+                UniversitiesResult.Success(
                     UniversityLoadResult(
                         universities = remoteUniversities,
                         source = UniversityLoadSource.Remote,
@@ -61,13 +62,13 @@ class UniversityRepositoryImpl @Inject constructor(
         }
     }
 
-    private suspend fun loadCachedUniversities(remoteError: Throwable): Result<UniversityLoadResult> {
+    private suspend fun loadCachedUniversities(remoteError: Throwable): UniversitiesResult {
         return try {
             val cached = dao.getUniversities().map { it.toDomain() }
             if (cached.isEmpty()) {
-                Result.failure(remoteError)
+                UniversitiesResult.Error(remoteError)
             } else {
-                Result.success(
+                UniversitiesResult.Success(
                     UniversityLoadResult(
                         universities = cached,
                         source = UniversityLoadSource.Cache,
@@ -76,7 +77,7 @@ class UniversityRepositoryImpl @Inject constructor(
             }
         } catch (cacheError: Throwable) {
             if (cacheError is CancellationException) throw cacheError
-            Result.failure(
+            UniversitiesResult.Error(
                 remoteError.apply {
                     addSuppressed(cacheError)
                 },

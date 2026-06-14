@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.fragment.NavHostFragment
-import com.d3vly.feature.details.navigation.DetailsNavigationContract
 import com.d3vly.feature.listing.navigation.ListingNavigationContract
 import com.d3vly.feature.listing.navigation.SelectedUniversityArgs
 import dagger.hilt.android.AndroidEntryPoint
@@ -16,7 +15,6 @@ class MainActivity : FragmentActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
         observeListingResults()
-        observeDetailsResults()
     }
 
     private fun openDetails(university: SelectedUniversityArgs) {
@@ -35,23 +33,6 @@ class MainActivity : FragmentActivity() {
                 openDetails(university)
             }
         }
-    }
-
-    private fun observeDetailsResults() {
-        navHostFragment.childFragmentManager.setFragmentResultListener(
-            DetailsNavigationContract.REFRESH_REQUEST_KEY,
-            this,
-        ) { _, bundle ->
-            if (DetailsNavigationContract.isRefreshRequested(bundle)) {
-                refreshListing()
-            }
-        }
-    }
-
-    private fun refreshListing() {
-        navHostFragment.navController
-            .getBackStackEntry(R.id.listingFragment)
-            .savedStateHandle[ListingNavigationContract.REFRESH_REQUESTED_KEY] = true
     }
 
     private val navHostFragment: NavHostFragment

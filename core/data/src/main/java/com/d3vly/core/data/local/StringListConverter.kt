@@ -10,7 +10,9 @@ class StringListConverter {
 
     @TypeConverter
     fun fromJson(value: String): List<String> {
-        return gson.fromJson(value, listType)
+        return runCatching {
+            gson.fromJson<List<String>>(value, listType).orEmpty()
+        }.getOrDefault(emptyList())
     }
 
     @TypeConverter

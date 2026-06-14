@@ -6,7 +6,6 @@ import androidx.fragment.app.FragmentManager
 
 object ListingNavigationContract {
     const val SELECTED_UNIVERSITY_REQUEST_KEY = "com.d3vly.feature.listing.SELECTED_UNIVERSITY_REQUEST"
-    const val REFRESH_REQUESTED_KEY = "com.d3vly.feature.listing.REFRESH_REQUESTED"
 
     private const val SELECTED_UNIVERSITY_ARGS_KEY = "com.d3vly.feature.listing.SELECTED_UNIVERSITY_ARGS"
 

@@ -6,6 +6,7 @@ import com.d3vly.core.data.remote.UniversityApi
 import com.d3vly.core.data.remote.UniversityDto
 import com.d3vly.core.data.remote.UniversitySearchConfig
 import com.d3vly.core.domain.model.UniversityLoadSource
+import com.d3vly.core.domain.model.UniversitiesResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertSame
@@ -38,9 +39,10 @@ class UniversityRepositoryImplTest {
 
         val result = repository.getUniversities()
 
-        assertTrue(result.isSuccess)
-        assertEquals(UniversityLoadSource.Remote, result.getOrThrow().source)
-        assertEquals(listOf("Abu Dhabi University", "Zayed University"), result.getOrThrow().universities.map { it.name })
+        assertTrue(result is UniversitiesResult.Success)
+        result as UniversitiesResult.Success
+        assertEquals(UniversityLoadSource.Remote, result.result.source)
+        assertEquals(listOf("Abu Dhabi University", "Zayed University"), result.result.universities.map { it.name })
         assertEquals(listOf("Abu Dhabi University", "Zayed University"), dao.cached.map { it.name })
         assertEquals(1, api.callCount)
     }
@@ -54,10 +56,11 @@ class UniversityRepositoryImplTest {
 
         val result = repository.getUniversities()
 
-        assertTrue(result.isSuccess)
-        assertEquals(UniversityLoadSource.Remote, result.getOrThrow().source)
-        assertTrue(result.getOrThrow().cacheWriteFailed)
-        assertEquals("Abu Dhabi University", result.getOrThrow().universities.single().name)
+        assertTrue(result is UniversitiesResult.Success)
+        result as UniversitiesResult.Success
+        assertEquals(UniversityLoadSource.Remote, result.result.source)
+        assertTrue(result.result.cacheWriteFailed)
+        assertEquals("Abu Dhabi University", result.result.universities.single().name)
     }
 
     @Test
@@ -81,9 +84,10 @@ class UniversityRepositoryImplTest {
 
         val result = repository.getUniversities()
 
-        assertTrue(result.isSuccess)
-        assertEquals(UniversityLoadSource.Cache, result.getOrThrow().source)
-        assertEquals("Cached University", result.getOrThrow().universities.single().name)
+        assertTrue(result is UniversitiesResult.Success)
+        result as UniversitiesResult.Success
+        assertEquals(UniversityLoadSource.Cache, result.result.source)
+        assertEquals("Cached University", result.result.universities.single().name)
         assertEquals(1, api.callCount)
     }
 
@@ -96,9 +100,10 @@ class UniversityRepositoryImplTest {
 
         val result = repository.getUniversities()
 
-        assertTrue(result.isFailure)
-        assertSame(failure, result.exceptionOrNull())
-        assertTrue(result.exceptionOrNull()?.suppressed?.isEmpty() == true)
+        assertTrue(result is UniversitiesResult.Error)
+        result as UniversitiesResult.Error
+        assertSame(failure, result.cause)
+        assertTrue(result.cause.suppressed.isEmpty())
     }
 
     @Test
@@ -111,9 +116,10 @@ class UniversityRepositoryImplTest {
 
         val result = repository.getUniversities()
 
-        assertTrue(result.isFailure)
-        assertSame(remoteFailure, result.exceptionOrNull())
-        assertEquals(listOf(cacheReadFailure), result.exceptionOrNull()?.suppressed?.toList())
+        assertTrue(result is UniversitiesResult.Error)
+        result as UniversitiesResult.Error
+        assertSame(remoteFailure, result.cause)
+        assertEquals(listOf(cacheReadFailure), result.cause.suppressed.toList())
     }
 
     private class FakeUniversityApi(

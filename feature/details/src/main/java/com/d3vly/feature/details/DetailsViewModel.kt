@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,34 +24,30 @@ class DetailsViewModel @Inject constructor() : ViewModel() {
     fun onIntent(intent: DetailsIntent) {
         when (intent) {
             is DetailsIntent.Load -> showUniversity(intent.args)
-            DetailsIntent.RefreshClicked -> closeAndRefreshListing()
+            DetailsIntent.RefreshListingClicked -> closeAndRequestListingRefresh()
         }
     }
 
     private fun showUniversity(args: UniversityDetailsArgs?) {
         if (args == null) {
-            _state.update {
-                DetailsState(errorMessage = DetailsMessage.MissingUniversity)
-            }
+            _state.value = DetailsState(errorMessage = DetailsMessage.MissingUniversity)
             return
         }
 
-        _state.update {
-            DetailsState(
-                name = args.name,
-                country = args.country,
-                alphaTwoCode = args.alphaTwoCode,
-                stateProvince = args.stateProvince,
-                webPages = args.webPages,
-                domains = args.domains,
-                errorMessage = null,
-            )
-        }
+        _state.value = DetailsState(
+            name = args.name,
+            country = args.country,
+            alphaTwoCode = args.alphaTwoCode,
+            stateProvince = args.stateProvince,
+            webPages = args.webPages,
+            domains = args.domains,
+            errorMessage = null,
+        )
     }
 
-    private fun closeAndRefreshListing() {
+    private fun closeAndRequestListingRefresh() {
         viewModelScope.launch {
-            _effects.emit(DetailsEffect.CloseAndRefreshListing)
+            _effects.emit(DetailsEffect.CloseAndRequestListingRefresh)
         }
     }
 }

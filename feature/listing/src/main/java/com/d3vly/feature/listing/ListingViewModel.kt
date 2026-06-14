@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.d3vly.core.domain.model.UniversityLoadResult
 import com.d3vly.core.domain.model.UniversityLoadSource
+import com.d3vly.core.domain.model.UniversitiesResult
 import com.d3vly.core.domain.usecase.GetUniversitiesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -59,28 +60,12 @@ class ListingViewModel @Inject constructor(
         if (_state.value.isLoading) return
 
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true, errorMessage = null, warningMessage = null) }
+            showLoading()
 
-            getUniversitiesUseCase()
-                .onSuccess { result ->
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            universities = result.universities.map { university -> university.toUiModel() },
-                            errorMessage = null,
-                            warningMessage = result.toWarningMessage(),
-                        )
-                    }
-                }
-                .onFailure {
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            errorMessage = ListingMessage.UnableToLoad,
-                            warningMessage = null,
-                        )
-                    }
-                }
+            when (val result = getUniversitiesUseCase()) {
+                is UniversitiesResult.Success -> showUniversities(result.result)
+                is UniversitiesResult.Error -> showLoadError()
+            }
             runPendingRefreshIfNeeded()
         }
     }
@@ -95,6 +80,33 @@ class ListingViewModel @Inject constructor(
     private fun openDetails(university: UniversityUiModel) {
         viewModelScope.launch {
             _effects.emit(ListingEffect.OpenDetails(university.toSelectedUniversityArgs()))
+        }
+    }
+
+    private fun showLoading() {
+        _state.update {
+            it.copy(isLoading = true, errorMessage = null, warningMessage = null)
+        }
+    }
+
+    private fun showUniversities(result: UniversityLoadResult) {
+        _state.update {
+            it.copy(
+                isLoading = false,
+                universities = result.universities.map { university -> university.toUiModel() },
+                errorMessage = null,
+                warningMessage = result.toWarningMessage(),
+            )
+        }
+    }
+
+    private fun showLoadError() {
+        _state.update {
+            it.copy(
+                isLoading = false,
+                errorMessage = ListingMessage.UnableToLoad,
+                warningMessage = null,
+            )
         }
     }
 

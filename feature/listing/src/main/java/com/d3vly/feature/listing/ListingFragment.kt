@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.d3vly.core.designsystem.theme.D3vlyTestAppTheme
+import com.d3vly.core.navigation.ListingRefreshResultContract
 import com.d3vly.feature.listing.navigation.ListingNavigationContract
 import com.d3vly.feature.listing.navigation.SelectedUniversityArgs
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,18 +42,14 @@ class ListingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        findNavController()
-            .currentBackStackEntry
-            ?.savedStateHandle
-            ?.getLiveData<Boolean>(ListingNavigationContract.REFRESH_REQUESTED_KEY)
-            ?.observe(viewLifecycleOwner) { shouldRefresh ->
+        findNavController().currentBackStackEntry?.savedStateHandle?.let { savedStateHandle ->
+            ListingRefreshResultContract.refreshRequests(savedStateHandle).observe(viewLifecycleOwner) { shouldRefresh ->
                 if (shouldRefresh) {
-                    findNavController().currentBackStackEntry?.savedStateHandle?.remove<Boolean>(
-                        ListingNavigationContract.REFRESH_REQUESTED_KEY,
-                    )
+                    ListingRefreshResultContract.consumeRefreshRequest(savedStateHandle)
                     refresh()
                 }
             }
+        }
     }
 
     fun refresh() {

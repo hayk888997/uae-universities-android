@@ -4,15 +4,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.doOnLayout
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.d3vly.core.navigation.ListingRefreshResultContract
 import com.d3vly.feature.details.databinding.FragmentDetailsBinding
-import com.d3vly.feature.details.navigation.DetailsNavigationContract
 import com.d3vly.feature.details.navigation.UniversityDetailsArgs
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -37,12 +40,51 @@ class DetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        configureResponsiveLayout()
+
         binding.refreshButton.setOnClickListener {
-            viewModel.onIntent(DetailsIntent.RefreshClicked)
+            viewModel.onIntent(DetailsIntent.RefreshListingClicked)
         }
 
         observeViewModel()
         viewModel.onIntent(DetailsIntent.Load(UniversityDetailsArgs.from(arguments)))
+    }
+
+    private fun configureResponsiveLayout() {
+        val initialLeft = binding.contentContainer.paddingLeft
+        val initialTop = binding.contentContainer.paddingTop
+        val initialRight = binding.contentContainer.paddingRight
+        val initialBottom = binding.contentContainer.paddingBottom
+
+        fun constrainContentWidth() {
+            val rootWidth = binding.root.width
+            if (rootWidth == 0) return
+
+            val maxWidth = resources.getDimensionPixelSize(R.dimen.details_content_max_width)
+            val targetWidth = minOf(rootWidth, maxWidth)
+            val layoutParams = binding.contentContainer.layoutParams
+            if (layoutParams.width != targetWidth) {
+                layoutParams.width = targetWidth
+                binding.contentContainer.layoutParams = layoutParams
+            }
+        }
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            binding.contentContainer.setPadding(
+                initialLeft + systemBars.left,
+                initialTop + systemBars.top,
+                initialRight + systemBars.right,
+                initialBottom + systemBars.bottom,
+            )
+            constrainContentWidth()
+            insets
+        }
+
+        binding.root.doOnLayout {
+            constrainContentWidth()
+            ViewCompat.requestApplyInsets(it)
+        }
     }
 
     override fun onDestroyView() {
@@ -61,7 +103,7 @@ class DetailsFragment : Fragment() {
                 launch {
                     viewModel.effects.collect { effect ->
                         when (effect) {
-                            DetailsEffect.CloseAndRefreshListing -> closeAndRequestRefresh()
+                            DetailsEffect.CloseAndRequestListingRefresh -> closeAndRequestRefresh()
                         }
                     }
                 }
@@ -106,10 +148,11 @@ class DetailsFragment : Fragment() {
     }
 
     private fun closeAndRequestRefresh() {
-        findNavController().popBackStack()
-        DetailsNavigationContract.publishRefreshRequested(
-            fragmentManager = parentFragmentManager,
+        val navController = findNavController()
+        ListingRefreshResultContract.requestRefresh(
+            navController.previousBackStackEntry?.savedStateHandle,
         )
+        navController.popBackStack()
     }
 }
 

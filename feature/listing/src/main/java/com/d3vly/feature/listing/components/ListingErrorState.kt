@@ -1,8 +1,12 @@
 package com.d3vly.feature.listing.components
 
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -22,15 +26,22 @@ internal fun ListingErrorState(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier.padding(24.dp),
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.Center,
     ) {
         Text(
             text = message,
             style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.widthIn(max = 520.dp),
         )
-        Button(onClick = onRetry) {
+        Button(
+            onClick = onRetry,
+            modifier = Modifier.padding(top = 12.dp),
+        ) {
             Text(text = stringResource(R.string.listing_try_again))
         }
     }

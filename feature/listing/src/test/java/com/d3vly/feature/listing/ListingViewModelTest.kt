@@ -3,27 +3,23 @@ package com.d3vly.feature.listing
 import com.d3vly.core.domain.model.University
 import com.d3vly.core.domain.model.UniversityLoadResult
 import com.d3vly.core.domain.model.UniversityLoadSource
+import com.d3vly.core.domain.model.UniversitiesResult
 import com.d3vly.core.domain.repository.UniversityRepository
 import com.d3vly.core.domain.usecase.GetUniversitiesUseCase
+import com.d3vly.core.testing.MainDispatcherRule
 import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.TestWatcher
-import org.junit.runner.Description
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ListingViewModelTest {
@@ -71,7 +67,7 @@ class ListingViewModelTest {
     @Test
     fun `load intent exposes error when use case fails`() = runTest {
         val viewModel = ListingViewModel(
-            GetUniversitiesUseCase(FakeUniversityRepository(Result.failure(IllegalStateException("Network error")))),
+            GetUniversitiesUseCase(FakeUniversityRepository(UniversitiesResult.Error(IllegalStateException("Network error")))),
         )
 
         viewModel.onIntent(ListingIntent.Load)
@@ -122,7 +118,7 @@ class ListingViewModelTest {
     fun `refresh failure keeps existing list and exposes error`() = runTest {
         val repository = QueuedUniversityRepository(
             first = CompletableDeferred(loadSuccess(listOf(university))),
-            second = Result.failure(IllegalStateException("Network error")),
+            second = UniversitiesResult.Error(IllegalStateException("Network error")),
         )
         val viewModel = ListingViewModel(GetUniversitiesUseCase(repository))
 
@@ -155,7 +151,7 @@ class ListingViewModelTest {
 
     @Test
     fun `refresh requested while loading runs after current load completes`() = runTest {
-        val firstResult = CompletableDeferred<Result<UniversityLoadResult>>()
+        val firstResult = CompletableDeferred<UniversitiesResult>()
         val refreshedUniversity = university.copy(name = "Zayed University")
         val repository = QueuedUniversityRepository(
             first = firstResult,
@@ -176,25 +172,25 @@ class ListingViewModelTest {
     }
 
     private class FakeUniversityRepository(
-        private val result: Result<UniversityLoadResult>,
+        private val result: UniversitiesResult,
     ) : UniversityRepository {
         var callCount = 0
             private set
 
-        override suspend fun getUniversities(): Result<UniversityLoadResult> {
+        override suspend fun getUniversities(): UniversitiesResult {
             callCount += 1
             return result
         }
     }
 
     private class QueuedUniversityRepository(
-        private val first: CompletableDeferred<Result<UniversityLoadResult>>,
-        private val second: Result<UniversityLoadResult>,
+        private val first: CompletableDeferred<UniversitiesResult>,
+        private val second: UniversitiesResult,
     ) : UniversityRepository {
         var callCount = 0
             private set
 
-        override suspend fun getUniversities(): Result<UniversityLoadResult> {
+        override suspend fun getUniversities(): UniversitiesResult {
             callCount += 1
             return if (callCount == 1) first.await() else second
         }
@@ -204,27 +200,14 @@ class ListingViewModelTest {
         universities: List<University>,
         source: UniversityLoadSource = UniversityLoadSource.Remote,
         cacheWriteFailed: Boolean = false,
-    ): Result<UniversityLoadResult> {
-        return Result.success(
+    ): UniversitiesResult {
+        return UniversitiesResult.Success(
             UniversityLoadResult(
                 universities = universities,
                 source = source,
                 cacheWriteFailed = cacheWriteFailed,
             ),
         )
-    }
-}
-
-@OptIn(ExperimentalCoroutinesApi::class)
-class MainDispatcherRule(
-    private val dispatcher: TestDispatcher = UnconfinedTestDispatcher(),
-) : TestWatcher() {
-    override fun starting(description: Description) {
-        Dispatchers.setMain(dispatcher)
-    }
-
-    override fun finished(description: Description) {
-        Dispatchers.resetMain()
     }
 }
 
