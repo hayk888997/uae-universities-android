@@ -45,7 +45,7 @@ internal fun UniversityRow(
                 softWrap = true,
             )
             Text(
-                text = webPage,
+                text = webPage.ifBlank { stringResource(R.string.listing_website_unavailable) },
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.secondary,
             )

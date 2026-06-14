@@ -98,6 +98,27 @@ class ListingViewModelTest {
     }
 
     @Test
+    fun `load intent exposes cache write warning when remote data could not be saved`() = runTest {
+        val viewModel = ListingViewModel(
+            GetUniversitiesUseCase(
+                FakeUniversityRepository(
+                    loadSuccess(
+                        universities = listOf(university),
+                        cacheWriteFailed = true,
+                    ),
+                ),
+            ),
+        )
+
+        viewModel.onIntent(ListingIntent.Load)
+        advanceUntilIdle()
+
+        assertEquals(listOf(university), viewModel.state.value.universities)
+        assertNull(viewModel.state.value.errorMessageRes)
+        assertEquals(R.string.listing_warning_cache_write_failed, viewModel.state.value.warningMessageRes)
+    }
+
+    @Test
     fun `refresh failure keeps existing list and exposes error`() = runTest {
         val repository = QueuedUniversityRepository(
             first = CompletableDeferred(loadSuccess(listOf(university))),
@@ -182,11 +203,13 @@ class ListingViewModelTest {
     private fun loadSuccess(
         universities: List<University>,
         source: UniversityLoadSource = UniversityLoadSource.Remote,
+        cacheWriteFailed: Boolean = false,
     ): Result<UniversityLoadResult> {
         return Result.success(
             UniversityLoadResult(
                 universities = universities,
                 source = source,
+                cacheWriteFailed = cacheWriteFailed,
             ),
         )
     }

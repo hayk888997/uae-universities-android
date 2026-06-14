@@ -46,6 +46,21 @@ class UniversityRepositoryImplTest {
     }
 
     @Test
+    fun `getUniversities returns remote data when cache write fails`() = runTest {
+        val cacheWriteFailure = IllegalStateException("Cache write failed")
+        val api = FakeUniversityApi(Result.success(listOf(remoteA)))
+        val dao = FakeUniversityDao(insertFailure = cacheWriteFailure)
+        val repository = UniversityRepositoryImpl(api, dao)
+
+        val result = repository.getUniversities()
+
+        assertTrue(result.isSuccess)
+        assertEquals(UniversityLoadSource.Remote, result.getOrThrow().source)
+        assertTrue(result.getOrThrow().cacheWriteFailed)
+        assertEquals("Abu Dhabi University", result.getOrThrow().universities.single().name)
+    }
+
+    @Test
     fun `getUniversities falls back to cached data when remote fails`() = runTest {
         val failure = IllegalStateException("Network error")
         val api = FakeUniversityApi(Result.failure(failure))
@@ -83,6 +98,22 @@ class UniversityRepositoryImplTest {
 
         assertTrue(result.isFailure)
         assertSame(failure, result.exceptionOrNull())
+        assertTrue(result.exceptionOrNull()?.suppressed?.isEmpty() == true)
+    }
+
+    @Test
+    fun `getUniversities preserves remote failure when cache read fails`() = runTest {
+        val remoteFailure = IllegalStateException("Network error")
+        val cacheReadFailure = IllegalStateException("Cache read failed")
+        val api = FakeUniversityApi(Result.failure(remoteFailure))
+        val dao = FakeUniversityDao(getFailure = cacheReadFailure)
+        val repository = UniversityRepositoryImpl(api, dao)
+
+        val result = repository.getUniversities()
+
+        assertTrue(result.isFailure)
+        assertSame(remoteFailure, result.exceptionOrNull())
+        assertEquals(listOf(cacheReadFailure), result.exceptionOrNull()?.suppressed?.toList())
     }
 
     private class FakeUniversityApi(
@@ -100,13 +131,19 @@ class UniversityRepositoryImplTest {
 
     private class FakeUniversityDao(
         initialCache: List<UniversityEntity> = emptyList(),
+        private val getFailure: Throwable? = null,
+        private val insertFailure: Throwable? = null,
     ) : UniversityDao {
         var cached: List<UniversityEntity> = initialCache
             private set
 
-        override suspend fun getUniversities(): List<UniversityEntity> = cached
+        override suspend fun getUniversities(): List<UniversityEntity> {
+            getFailure?.let { throw it }
+            return cached
+        }
 
         override suspend fun insertUniversities(universities: List<UniversityEntity>) {
+            insertFailure?.let { throw it }
             cached = cached + universities
         }
 

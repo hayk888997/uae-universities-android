@@ -63,7 +63,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
+            android:autoLink="web"
+            android:linksClickable="true"
             android:textColor="@color/app_navy_dark"
+            android:textColorLink="@color/app_teal"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView

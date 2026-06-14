@@ -7,16 +7,15 @@ junitVersion = "1.3.0"
 espressoCore = "3.7.0"
 lifecycleRuntimeKtx = "2.10.0"
 activityCompose = "1.13.0"
-activityKtx = "1.9.3"
+activityKtx = "1.13.0"
 fragmentKtx = "1.8.5"
 navigation = "2.8.5"
 composeBom = "2024.09.00"
 hilt = "2.57.2"
-hiltNavigationCompose = "1.3.0"
 retrofit = "2.11.0"
 gson = "2.11.0"
 room = "2.7.2"
-lifecycleViewmodel = "2.8.7"
+lifecycleViewmodel = "2.10.0"
 coroutines = "1.9.0"
 javaxInject = "1"
 
@@ -46,7 +45,6 @@ androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifec
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 dagger-hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
-androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }

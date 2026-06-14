@@ -17,6 +17,7 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
@@ -36,6 +37,9 @@ object DataModule {
     @Singleton
     fun provideUniversityApi(): UniversityApi {
         val client = OkHttpClient.Builder()
+            .connectTimeout(NETWORK_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .readTimeout(NETWORK_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .writeTimeout(NETWORK_TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .build()
 
         return Retrofit.Builder()
@@ -62,4 +66,6 @@ object DataModule {
     fun provideUniversityDao(database: UniversityDatabase): UniversityDao {
         return database.universityDao()
     }
+
+    private const val NETWORK_TIMEOUT_SECONDS = 15L
 }

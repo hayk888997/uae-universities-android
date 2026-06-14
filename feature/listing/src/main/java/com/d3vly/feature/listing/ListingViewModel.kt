@@ -3,6 +3,7 @@ package com.d3vly.feature.listing
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.d3vly.core.domain.model.University
+import com.d3vly.core.domain.model.UniversityLoadResult
 import com.d3vly.core.domain.model.UniversityLoadSource
 import com.d3vly.core.domain.usecase.GetUniversitiesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -68,7 +69,7 @@ class ListingViewModel @Inject constructor(
                             isLoading = false,
                             universities = result.universities,
                             errorMessageRes = null,
-                            warningMessageRes = result.source.toWarningMessageRes(),
+                            warningMessageRes = result.toWarningMessageRes(),
                         )
                     }
                 }
@@ -98,8 +99,10 @@ class ListingViewModel @Inject constructor(
         }
     }
 
-    private fun UniversityLoadSource.toWarningMessageRes(): Int? {
-        return when (this) {
+    private fun UniversityLoadResult.toWarningMessageRes(): Int? {
+        if (cacheWriteFailed) return R.string.listing_warning_cache_write_failed
+
+        return when (source) {
             UniversityLoadSource.Remote -> null
             UniversityLoadSource.Cache -> R.string.listing_warning_cached_data
         }
