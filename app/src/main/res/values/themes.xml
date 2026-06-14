@@ -4,9 +4,9 @@
     <style name="Theme.D3vlyTestApp" parent="android:style/Theme.Material.Light.NoActionBar">
         <item name="android:fontFamily">sans</item>
         <item name="android:windowLightStatusBar">false</item>
-        <item name="android:statusBarColor">@color/tamm_navy_dark</item>
-        <item name="android:navigationBarColor">@color/tamm_navy_dark</item>
-        <item name="android:windowBackground">@color/tamm_cloud</item>
-        <item name="android:colorAccent">@color/tamm_teal</item>
+        <item name="android:statusBarColor">@color/app_navy_dark</item>
+        <item name="android:navigationBarColor">@color/app_navy_dark</item>
+        <item name="android:windowBackground">@color/app_cloud</item>
+        <item name="android:colorAccent">@color/app_teal</item>
     </style>
 </resources>

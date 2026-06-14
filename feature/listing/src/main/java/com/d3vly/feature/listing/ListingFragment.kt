@@ -5,13 +5,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
+import com.d3vly.core.designsystem.theme.D3vlyTestAppTheme
 import com.d3vly.core.domain.model.University
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -33,7 +33,7 @@ class ListingFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                MaterialTheme {
+                D3vlyTestAppTheme {
                     ListingScreen(
                         refreshSignal = refreshSignal,
                         onUniversitySelected = { university ->

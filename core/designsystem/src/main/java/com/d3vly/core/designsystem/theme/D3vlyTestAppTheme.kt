@@ -1,4 +1,4 @@
-package com.d3vly.testapp.ui.theme
+package com.d3vly.core.designsystem.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -12,43 +12,43 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = TammTealLight,
-    onPrimary = TammNavyDark,
-    secondary = TammSlate,
-    onSecondary = TammNavyDark,
-    tertiary = TammCoralLight,
-    onTertiary = TammNavyDark,
-    background = TammNavyDark,
-    onBackground = TammWhite,
+    primary = AppTealLight,
+    onPrimary = AppNavyDark,
+    secondary = AppSlate,
+    onSecondary = AppNavyDark,
+    tertiary = AppCoralLight,
+    onTertiary = AppNavyDark,
+    background = AppNavyDark,
+    onBackground = AppWhite,
     surface = Color(0xFF0F263A),
-    onSurface = TammWhite,
+    onSurface = AppWhite,
     surfaceVariant = Color(0xFF17364E),
-    onSurfaceVariant = TammSlate,
-    error = TammCoralLight,
+    onSurfaceVariant = AppSlate,
+    error = AppCoralLight,
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = TammNavy,
-    onPrimary = TammWhite,
-    secondary = TammTeal,
-    onSecondary = TammWhite,
-    tertiary = TammCoral,
-    onTertiary = TammWhite,
-    background = TammCloud,
-    onBackground = TammText,
-    surface = TammWhite,
-    onSurface = TammText,
-    surfaceVariant = TammMist,
-    onSurfaceVariant = TammTextSecondary,
-    outline = TammTealDark,
-    error = TammCoral,
+    primary = AppNavy,
+    onPrimary = AppWhite,
+    secondary = AppTeal,
+    onSecondary = AppWhite,
+    tertiary = AppCoral,
+    onTertiary = AppWhite,
+    background = AppCloud,
+    onBackground = AppText,
+    surface = AppWhite,
+    onSurface = AppText,
+    surfaceVariant = AppMist,
+    onSurfaceVariant = AppTextSecondary,
+    outline = AppTealDark,
+    error = AppCoral,
 )
 
 @Composable
 fun D3vlyTestAppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     dynamicColor: Boolean = false,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
@@ -63,6 +63,6 @@ fun D3vlyTestAppTheme(
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
-        content = content
+        content = content,
     )
 }

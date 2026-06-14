@@ -25,5 +25,6 @@ rootProject.name = "D3vly TestApp"
 include(":app")
 include(":core:domain")
 include(":core:data")
+include(":core:designsystem")
 include(":feature:listing")
 include(":feature:details")

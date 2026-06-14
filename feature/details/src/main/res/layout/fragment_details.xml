@@ -2,7 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/tamm_cloud"
+    android:background="@color/app_cloud"
     android:fillViewport="true">
 
     <LinearLayout
@@ -15,13 +15,13 @@
             android:layout_width="72dp"
             android:layout_height="6dp"
             android:layout_marginBottom="20dp"
-            android:background="@color/tamm_teal" />
+            android:background="@color/app_teal" />
 
         <TextView
             android:id="@+id/nameTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/tamm_navy"
+            android:textColor="@color/app_navy"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:singleLine="false"
             android:textStyle="bold" />
@@ -31,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:textColor="@color/tamm_navy_dark"
+            android:textColor="@color/app_navy_dark"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
@@ -39,7 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:textColor="@color/tamm_text_secondary"
+            android:textColor="@color/app_text_secondary"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
@@ -47,7 +47,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:textColor="@color/tamm_text_secondary"
+            android:textColor="@color/app_text_secondary"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
@@ -55,7 +55,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:textColor="@color/tamm_navy_dark"
+            android:textColor="@color/app_navy_dark"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
@@ -63,7 +63,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:textColor="@color/tamm_navy_dark"
+            android:textColor="@color/app_navy_dark"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <Button
@@ -71,8 +71,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            android:backgroundTint="@color/tamm_teal"
-            android:textColor="@color/tamm_white"
+            android:backgroundTint="@color/app_teal"
+            android:textColor="@color/app_white"
             android:text="@string/refresh_listing" />
     </LinearLayout>
 </ScrollView>
